@@ -1,0 +1,473 @@
+openapi: 3.0.0
+info:
+  title: Roles API
+  version: 1.0.0
+  description:
+    The Medallia Roles API enables auditing roles in Medallia Experience
+    Cloud.  Roles define features and permissions.
+  termsOfService: https://medallia.com/about/legal/terms/api
+servers:
+  - url: 'https://{api-gateway-hostname}'
+    variables:
+      api-gateway-hostname:
+        default: instance.apis.medallia.com
+        description:
+          The Medallia Experience Cloud hostname used to access
+          Medallia Reporting
+paths:
+  /admin/v1/roles:
+    get:
+      tags:
+        - Roles
+      description: Lists all roles
+      operationId: listRoles
+      parameters:
+        - name: role
+          in: query
+          description: The role name to filter results
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
+        - name: limit
+          in: query
+          description: The maximum number of items to return per page
+          required: false
+          schema:
+            type: integer
+        - name: cursor
+          in: query
+          description:
+            The token from the previous response, used to return the next
+            page of data
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: The roles that match the filters provided
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoleList'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        412:
+          description: Precondition failed
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+  /admin/v1/roles/{role}:
+    get:
+      tags:
+        - Roles
+      description: Returns a single role
+      operationId: getByRoleName
+      parameters:
+        - in: path
+          name: role
+          description: The role name
+          required: true
+          schema:
+            type: string
+            format: identifier
+      responses:
+        200:
+          description: The role details
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Role'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        412:
+          description: Precondition failed
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+components:
+  headers:
+    X-RateLimit-Limit-day:
+      description: The number of requests allowed in total in a 24-hour period
+      schema:
+        type: integer
+      example: 10000
+    X-RateLimit-Remaining-day:
+      description: The number of requests available to make in a 24-hour period
+      schema:
+        type: integer
+      example: 10000
+    X-RateLimit-Limit-second:
+      description: The number of requests allowed in total in a 1-second period
+      schema:
+        type: integer
+      example: 10
+    X-RateLimit-Remaining-second:
+      description: The number of requests available to make in a 1-second period
+      schema:
+        type: integer
+      example: 10
+    X-Medallia-Rpc-Request-Id:
+      description: The request ID, used by Medallia support for troubleshooting
+      schema:
+        type: string
+        format: identifier
+      example: 94615edd-d9d0-4921-8b3e-60615b3d3431
+  schemas:
+    RoleList:
+      description: A `User` collection.
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+        _has_more_items:
+          type: boolean
+        _next:
+          type: object
+          properties:
+            href:
+              type: string
+              description: Link to the next page in the result set
+              maxLength: 10240
+    Role:
+      type: object
+      required:
+        - first_name
+        - last_name
+        - roles
+        - username
+      properties:
+        name:
+          type: string
+          format: identifier
+          description: The name used to identify the role
+          maxLength: 10240
+        group_name:
+          type: string
+          format: identifier
+          description:
+            The logical administrative group of which this role is part
+          maxLength: 10240
+        role_type:
+          type: string
+          description: The role's specific type
+          enum:
+            - admin
+            - other
+        data-views:
+          type: array
+          items:
+            type: object
+            properties:
+              data-view:
+                type: string
+                description: The name of the data view
+                maxLength: 10240
+        display_order:
+          type: integer
+        permissions:
+          type: object
+          properties:
+            administrative:
+              type: array
+              items:
+                type: object
+                properties:
+                  permission:
+                    type: string
+                    description:
+                      See [Administrative Permissions](https://docs.medallia.com/admin/index.html#Help/RolesAndPermissions/Administrative_permissions.html) for details.
+                    enum:
+                      - Access Crowdicity
+                      - Access Journey Analytics
+                      - Access Strikedeck
+                      - Admin Access Crowdicity
+                      - Admin Access Journey Analytics
+                      - Admin Access Strikedeck
+                      - Advanced Digital Survey Management
+                      - Blog Contributor
+                      - Blog Editor
+                      - Blog User
+                      - Create Ad Hoc Surveys
+                      - Create Ask Now Tests and View My Reports
+                      - Create Designs
+                      - Create Experience Programs
+                      - Create Survey Emails
+                      - Create Surveys
+                      - Customer Admin Access LivingLens
+                      - Digital Command Center Administration
+                      - Edit Ad Hoc Survey Sampling Settings
+                      - Edit Ad Hoc Surveys
+                      - Edit Designs
+                      - Edit Experience Programs
+                      - Edit Others' Ask Now Tests and View Their Reports
+                      - Edit Survey emails
+                      - Edit Surveys
+                      - Edit Unit Groups
+                      - Edit Units
+                      - Impersonate Users
+                      - Import Data Via Webfeed
+                      - Import Users
+                      - Manage Ad Hoc Invites
+                      - Manage Alert Cases
+                      - Manage All Fields
+                      - Manage All Translations
+                      - Manage Bulk Imports
+                      - Manage Conversations
+                      - Manage Custom Modules
+                      - Manage Data Exports
+                      - Manage Data Views
+                      - Manage Digital Surveys
+                      - Manage Email Allow-lists
+                      - Manage Emails Translations
+                      - Manage Language Settings
+                      - Manage Outbound Change Sets
+                      - Manage Reports and Controls
+                      - Manage Reports and Controls -- LEGACY
+                      - Manage Role Preferences
+                      - Manage Roles
+                      - Manage Sandboxes
+                      - Manage Shared Custom Filters
+                      - Manage Shared Survey Text Translations
+                      - Manage Surveys
+                      - Manage Surveys Translations
+                      - Manage Topics
+                      - Manage Unit Groups
+                      - Manage Unit Types
+                      - Manage Units
+                      - Manage Users
+                      - Manage Zingle Analytics
+                      - Manage Zingle Bulk Messaging
+                      - Manage Zingle Contact Deletion
+                      - Manage Zingle Standard
+                      - Manage Zingle User Management
+                      - Pro Access LivingLens
+                      - Pro Admin Access LivingLens
+                      - Remote API Call Configuration Management
+                      - Standard Access LivingLens
+                      - View Data from MQL
+                      - View Data from QueryAPI
+                      - View Feedfile Detailed Reports
+                      - View Goals
+                      - View Installed Apps
+                      - View Others' Ask Now Tests and Reports
+                      - View Surveys
+                      - View feedbacks and reports
+                      - Zingle Dashboard Administration
+            reporting:
+              type: array
+              items:
+                type: object
+                properties:
+                  permission:
+                    type: string
+                    description:
+                      See [Reporting Permissions](https://docs.medallia.com/admin/index.html#Help/RolesAndPermissions/Reporting_permissions.html)
+                    enum:
+                      - Access Mobile App
+                      - Access Voices
+                      - Add Attachments on Followup Email
+                      - Add Notes to Activity Log
+                      - Aggregated Actions filters in Responses
+                      - All Modules
+                      - Allow User-level Filters
+                      - Assign Alerts
+                      - Attention Types filters in Responses
+                      - Batch PDF
+                      - Call Customers
+                      - Call Status
+                      - Change Alert Type
+                      - Close/Reopen Alerts
+                      - Comment Filter in Other Reports
+                      - Comment Filter in Responses
+                      - Complex Query
+                      - Create Action Plans
+                      - Create Case
+                      - Create filtered Contact Lists
+                      - Custom Exports
+                      - Custom Filter
+                      - Custom Groups
+                      - Custom Query
+                      - Customer Effort filters in Responses
+                      - Customer List
+                      - Customize Suggested Actions Display
+                      - Delete Action Plans
+                      - Desktop Promotional Banner
+                      - Desktop Promotional Page
+                      - Disable Custom Timeperiods Option
+                      - Disable Saved Filters
+                      - Edit Comment Topics
+                      - Edit Email Notification Settings
+                      - Edit Machine Translation
+                      - Edit Manual Translation
+                      - Edit sentiment
+                      - Employee Recognition filters in Responses
+                      - Exclude Social Responses
+                      - Exclude Surveys
+                      - Export Invitations
+                      - Export Ranker, All Questions (Visible Rows)
+                      - Export Ranker, All Rows (Visible Columns)
+                      - Export Responses
+                      - Export Tag Results
+                      - Extended Benchmark
+                      - External Response Settings
+                      - Feedback Type Filter
+                      - Followup Options
+                      - Forward Response using Enterprise Email
+                      - Forward Response via Email
+                      - Forward Response via Email through Medallia
+                      - Forward Response via Email with PDF
+                      - Limited Extended Benchmark
+                      - MM2 Add Note (if enabled in Express)
+                      - MM2 Assign Alert (if enabled in Express)
+                      - MM2 Case Management (if enabled in Express)
+                      - MM2 Close Alert (if enabled in Express)
+                      - MM2 Manage Alerts (if enabled in Express)
+                      - MM2 Ranker Module
+                      - MM2 Reopen Alert (if enabled in Express)
+                      - MM2 Reply by Email (if enabled in Express)
+                      - MM2 Reply by Email With Templates (if enabled in Express)
+                      - MM2 Reply by Email Without Templates
+                      - MM2 Resolve Alert (if enabled in Express)
+                      - MM2 Scorecards Module
+                      - MM2 Social Media Reply (If enabled in Express with SOCIAL_MEDIA...)
+                      - Manage Action Plan Impact Analysis
+                      - Manage Action Plan Tasks
+                      - Manage Custom Filters
+                      - Manage Custom Rival Lists
+                      - Manage Watchlist
+                      - Manual Survey Link
+                      - Media Type filter in Responses
+                      - Mention Units in Comments
+                      - Mention Users in Comments
+                      - Needs Attention filters in Responses
+                      - Opt Out Addressee
+                      - Problems Compare
+                      - Problems Snapshot
+                      - Problems Table
+                      - Profiler Graph
+                      - Profiler Table
+                      - Receive Push Reports built in classic setup
+                      - Report Issues with Sources
+                      - Resend Invite
+                      - Resolve Alerts
+                      - Respond Directly
+                      - Respond Directly to Social Feedback
+                      - Search Field
+                      - Select Base Reporting Date
+                      - Select Default Filter Settings
+                      - Send Followup Email
+                      - Send Followup Email with Data Masking (only compatible with MAX)
+                      - Send Invitations
+                      - Subscriptions
+                      - Suggest Involved Users
+                      - Suggestion filter in Responses
+                      - Topic Filter in Other Reports
+                      - Topic Filters in Responses
+                      - Update Action Plans
+                      - Update Action Plans status
+                      - User Activities
+                      - View Action Plans
+                      - View Activity Log
+                      - View Alerts
+                      - View Bubbles Topic Investigator
+                      - View Charts Topic Investigator
+                      - View Comment Keywords
+                      - View Comment Topics
+                      - View Enhanced responses
+                      - View Excluded Surveys
+                      - View Personal Data
+                      - View Rival Comparision Report
+                      - View Rival Responses Report
+                      - View Tag Investigator (TI1)
+                      - View Theme Explorer
+                      - View and Create Community Comments
+                      - View and Use Community Likes
+                      - Viewed by Others
+                      - Wipe Survey Answers
+                      - '[NOT IN USE, REPLACED BY MANAGE_WATCHLIST] Watchlist Notification Creation (Web & Mobile)'
+        _system_properties:
+          type: object
+          properties:
+            created_on:
+              type: string
+              format: date-time
+              readOnly: true
+              description:
+                The timestamp when the role was last modified, in
+                ISO-8601 format `yyyy-MM-dd'T'HH:mm:ss.SSSZZ`
+            modified_on:
+              type: string
+              format: date-time
+              readOnly: true
+              description:
+                The timestamp when the role was last modified, in
+                ISO-8601 format `yyyy-MM-dd'T'HH:mm:ss.SSSZZ`
+  securitySchemes:
+    mecOauth:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{reporting-hostname}/oauth/{company}/token
+          scopes: {}
+security:
+  - mecOauth: []

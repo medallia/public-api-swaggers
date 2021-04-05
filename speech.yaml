@@ -1,0 +1,307 @@
+openapi: 3.0.0
+info:
+  title: Speech API
+  version: 1.0.0
+  description:
+    The Medallia Speech API enables processing of audio recordings within
+    Medallia Experience Cloud, including transcription and text analytics.
+  termsOfService: https://medallia.com/about/legal/terms/api
+servers:
+  - url: 'https://{api-gateway-hostname}'
+    variables:
+      api-gateway-hostname:
+        default: instance.apis.medallia.com
+        description:
+          The Medallia Experience Cloud hostname used to access
+          Medallia Reporting
+paths:
+  /speech/v0/bulk-ingest:
+    post:
+      tags:
+        - Speech
+      summary: Queues recordings for processing
+      operationId: speechV0BulkInjest
+      requestBody:
+        description: A list of the recordings to process, up to 1,000 per request
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/RecordingMetadata'
+      responses:
+        201:
+          description: Processing status of the submitted job request
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessingResponse'
+        400:
+          description: Invalid request
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        406:
+          description: Not acceptable
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        409:
+          description: Request conflict with current state of the server
+        412:
+          description: Precondition failed
+        415:
+          description: Not supported
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+components:
+  headers:
+    X-RateLimit-Limit-day:
+      description: The number of requests allowed in total in a 24-hour period
+      schema:
+        type: integer
+      example: 10000
+    X-RateLimit-Remaining-day:
+      description: The number of requests available to make in a 24-hour period
+      schema:
+        type: integer
+      example: 10000
+    X-RateLimit-Limit-second:
+      description: The number of requests allowed in total in a 1-second period
+      schema:
+        type: integer
+      example: 10
+    X-RateLimit-Remaining-second:
+      description: The number of requests available to make in a 1-second period
+      schema:
+        type: integer
+      example: 10
+    X-Medallia-Rpc-Request-Id:
+      description: The request ID, used by Medallia support for troubleshooting
+      schema:
+        type: string
+        format: identifier
+      example: 94615edd-d9d0-4921-8b3e-60615b3d3431
+  schemas:
+    RecordingMetadata:
+      type: object
+      description: The metadata associated with a single recording
+      required:
+        - call_date_and_time
+        - call_identifier
+        - speech_file_name
+        - unit_identifier
+      properties:
+        call_identifier:
+          type: string
+          description: Unique record identifier, typically the Universal Call ID (UCID)
+          maxLength: 10240
+        speech_file_name:
+          type: string
+          description:
+            The name of the recording file as uploaded to
+            Medillia Managed File Transfer
+          maxLength: 10240
+        unit_identifier:
+          type: string
+          description:
+            ID of the agent that handled the call (typically the last agent
+            the customer is transferred to if there are multiple agents). This must
+            match the ID that is included in the organizational hierarchy for the
+            agent
+          maxLength: 10240
+        call_date_and_time:
+          type: string
+          format: date-time
+          description:
+            Interaction datetime in ISO-8601 format `yyyy-MM-DD'T'HH:mm:ssZZ`
+            (e.g. 2021-03-22T11:30:00-08:00)
+        call_recording_url:
+          type: string
+          format: uri
+          description:
+            URL of the call interaction recording, referencing an external
+            system for linkage purposes (not used for call transcription
+            processing)
+          maxLength: 10240
+        vertical_model:
+          type: string
+          description: Specific speech vertical model to use
+          default: Call Center
+          enum:
+            - Call Center
+            - Financial Services
+            - Healthcare
+            - Voicemail
+            - Survey
+            - Large Vocab
+            - General
+        locale:
+          type: string
+          description:
+            Primary language spoken during the call, specified in a format
+            compliant with [IETF BCP 47](https://tools.ietf.org/html/bcp47)
+          default: en-US
+          maxLength: 10240
+        apply_diarization:
+          type: string
+          description:
+            Applies diarization (channel assignment based on vocal audio
+            properties) to single-channel recordings
+          default: No
+          enum:
+            - Yes
+            - No
+        agent_channel:
+          type: string
+          description:
+            The audio channel (when recorded in stereo) associated with
+            the agent
+          default: 0
+          enum:
+            - 0
+            - 1
+        substitutions:
+          type: string
+          description:
+            A set of substitutions to apply to the transcribed text,
+            encoded in a stringified-JSON format of key/value
+            (original/substitute) pairs
+          default: '{}'
+        apply_redaction:
+          type: string
+          description: Applies redaction to the audio and transcribed text
+          default: No
+          enum:
+            - Yes
+            - No
+        first_name:
+          type: string
+          description: The first name of the customer
+          maxLength: 10240
+        last_name:
+          type: string
+          description: The last name of the customer
+          maxLength: 10240
+        email:
+          type: string
+          format: email
+          description: The email address of the customer
+        phone_number:
+          type: string
+          description:
+            The phone number of the customer, typically from
+            ANI (Automatic Number Identification)
+          maxLength: 10240
+        connection_id:
+          type: string
+          description:  The unique identifier of a specific connection profile
+          maxLength: 10240
+        profile_uuid:
+          type: string
+          description: The unique identifier (UUID) of the customer profile
+          maxLength: 10240
+    ProcessingResponse:
+      type: object
+      description: Result of a processing request
+      properties:
+        job_id:
+          type: string
+          format: uuid
+          description: The job identifier generated by Medallia
+        status:
+          type: string
+          description:
+            The job processing status, either ACCEPTED or REJECTED (to
+            indicate that all recordings were processed with the same
+            result) or PARTIALLY_ACCEPTED (to indicate a mixed result)
+          enum:
+            - ACCEPTED
+            - PARTIALLY_ACCEPTED
+            - REJECTED
+        details:
+          type: array
+          description: Details per metadata, when the status is PARTIALLY_ACCEPTED
+          items:
+            type: object
+            required:
+              - call_identifier
+              - speech_file_name
+              - status
+            properties:
+              call_identifier:
+                type: string
+                description: Unique record identifier
+                maxLength: 10240
+              speech_file_name:
+                type: string
+                description:
+                  The name of the recording file as uploaded to
+                  Medillia Managed File Transfer
+                maxLength: 10240
+              status:
+                type: string
+                description: The processing status for the recording
+                enum:
+                  - ACCEPTED
+                  - REJECTED
+              error_message:
+                type: string
+                description: Details about the processing failure
+                maxLength: 10240
+  securitySchemes:
+    mecOauth:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{reporting-hostname}/oauth/{company}/token
+          scopes: {}
+security:
+  - mecOauth: []

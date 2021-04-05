@@ -1,0 +1,127 @@
+openapi: 3.0.0
+info:
+  title: Query API
+  version: 1.0.0
+  description:
+    The Medallia Query API enables access to raw and aggregated data from
+    Medallia Experience Cloud.
+  termsOfService: https://medallia.com/about/legal/terms/api
+servers:
+  - url: 'https://{api-gateway-hostname}'
+    variables:
+      api-gateway-hostname:
+        default: instance.apis.medallia.com
+        description:
+          The Medallia Experience Cloud hostname used to access
+          Medallia Reporting
+paths:
+  /data/v0/query:
+    post:
+      tags:
+        - Query
+      description: Performs a GraphQL-based request
+      operationId: query
+      requestBody:
+        description: The GraphQL request payload
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - query
+              properties:
+                query:
+                  type: string
+                variables:
+                  type: object
+      responses:
+        200:
+          description:
+            The response to the query made, its data shape conforming to the
+            structure requested in the query
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        412:
+          description: Precondition failed
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+components:
+  headers:
+    X-RateLimit-Limit-day:
+      description: The number of requests allowed in total in a 24-hour period
+      schema:
+        type: integer
+      example: 10000
+    X-RateLimit-Remaining-day:
+      description: The number of requests available to make in a 24-hour period
+      schema:
+        type: integer
+      example: 10000
+    X-RateLimit-Limit-second:
+      description: The number of requests allowed in total in a 1-second period
+      schema:
+        type: integer
+      example: 10
+    X-RateLimit-Remaining-second:
+      description: The number of requests available to make in a 1-second period
+      schema:
+        type: integer
+      example: 10
+    X-Medallia-Rpc-Request-Id:
+      description: The request ID, used by Medallia support for troubleshooting
+      schema:
+        type: string
+        format: identifier
+      example: 94615edd-d9d0-4921-8b3e-60615b3d3431
+  securitySchemes:
+    mecOauth:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{reporting-hostname}/oauth/{company}/token
+          scopes: {}
+security:
+  - mecOauth: []

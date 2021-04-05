@@ -1,0 +1,871 @@
+openapi: 3.0.0
+info:
+  title: Users API
+  version: 1.0.0
+  description:
+    The Medallia Users API enables auditing and management of user accounts
+    in Medallia Experience Cloud.  User accounts belong to one or more roles
+    that define features and permissions.
+  termsOfService: https://medallia.com/about/legal/terms/api
+servers:
+  - url: 'https://{api-gateway-hostname}'
+    variables:
+      api-gateway-hostname:
+        default: instance.apis.medallia.com
+        description:
+          The Medallia Experience Cloud hostname used to access
+          Medallia Reporting
+paths:
+  /admin/v1/users:
+    get:
+      tags:
+        - Users
+      description: Lists all users
+      operationId: listUsers
+      parameters:
+        - name: companyAccountId
+          in: query
+          description: The company account id to filter results
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
+        - name: username
+          in: query
+          description: The user name to filter results
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
+        - name: role
+          in: query
+          description: The role name to filter results
+          required: false
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: The user status to filter results
+          required: false
+          schema:
+            type: string
+            enum:
+              - active
+              - inactive
+        - name: limit
+          in: query
+          description: The maximum number of items to return per page
+          required: false
+          schema:
+            type: integer
+        - name: cursor
+          in: query
+          description:
+            The token from the previous response, used to return the next
+            page of data
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: The users that match the filters provided
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSummaryList'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        412:
+          description: Precondition failed
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+    post:
+      tags:
+        - Users
+      description: Creates a new user
+      operationId: createUser
+      requestBody:
+        description: The user to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      parameters:
+        - in: header
+          name: X-Medallia-Send-New-User-Email
+          description:
+            A request header indicating the configured email template for
+            new users should be sent to the user being created.  If
+            unspecified or set to `false`, no email is sent after a new
+            user is created.
+          required: false
+          schema:
+            type: string
+            enum:
+              - true
+              - false
+      responses:
+        200:
+          description: The created user account
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: Validations failed while performing the request
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        412:
+          description: Precondition failed
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+  /admin/v1/users/{username}:
+    get:
+      tags:
+        - Users
+      description: Returns a single user account
+      operationId: getByUserName
+      parameters:
+        - in: path
+          name: username
+          description: The username of the account
+          required: true
+          schema:
+            type: string
+            format: identifier
+      responses:
+        200:
+          description: The user account details
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        412:
+          description: Precondition failed
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+    put:
+      tags:
+        - Users
+      description:
+        Create or update the user account specified
+      operationId: upsertUser
+      parameters:
+        - name: username
+          in: path
+          description: The account's username identifier
+          required: true
+          schema:
+            type: string
+            format: identifier
+        - in: header
+          name: X-Medallia-Send-New-User-Email
+          description:
+            A request header indicating the configured email template for
+            new users should be sent to the user being created.  If
+            unspecified or set to `false`, no email is sent after a new
+            user is created.
+          required: false
+          schema:
+            type: string
+            enum:
+              - true
+              - false
+      requestBody:
+        description: The user to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        200:
+          description: The created user account
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: Validations failed while performing the request
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        412:
+          description: Precondition failed
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+  /admin/v1/users/{username}/actions/{action}:
+    post:
+      tags:
+        - Users
+      description: Perform the specified action on the user account
+      operationId: userAction
+      parameters:
+        - in: path
+          name: username
+          description: The account's username
+          required: true
+          schema:
+            type: string
+            format: identifier
+        - in: path
+          name: action
+          description: The action to perform on the user account
+          required: true
+          schema:
+            type: string
+            enum:
+              - reset-password
+              - activate
+              - inactive
+      responses:
+        204:
+          description: The action was successfully executed
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        400:
+          description: An error occured processing the request
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        412:
+          description: Precondition failed
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+  /admin/v1/users/{username}/data-access:
+    put:
+      tags:
+        - Users
+      description: Update a user's data access rules
+      operationId: putDataAccess
+      parameters:
+      - in: path
+        name: username
+        description: The account's username identifier
+        required: true
+        schema:
+          type: string
+          format: identifier
+      requestBody:
+        description: The data access rules to apply to the user account
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDataAccess'
+      responses:
+        200:
+          description: The updated data access rules
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        400:
+          description: Validations failed while performing the request
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        412:
+          description: Precondition failed
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+  /admin/v1/users-bulk-download:
+    get:
+      tags:
+        - Users
+      description: Downloads the list of users to an Excel-compatible spreadsheet
+      operationId: bulkDownloadUsers
+      parameters:
+        - name: companyAccountId
+          in: query
+          description: The company account id to filter results
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
+        - name: username
+          in: query
+          description: The user name to filter results
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
+        - name: role
+          in: query
+          description: The role name to filter results
+          required: false
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: The user status to filter results
+          required: false
+          schema:
+            type: string
+            enum:
+              - active
+              - inactive
+        - name: limit
+          in: query
+          description: The maximum number of items to return per page
+          required: false
+          schema:
+            type: integer
+        - name: cursor
+          in: query
+          description:
+            The token from the previous response, used to return the next
+            page of data
+          required: false
+          schema:
+            type: string
+        - name: lastUpdatedOnOrAfter
+          in: query
+          description:
+            The last time that the user account was updated, in ISO-8601
+            format `yyyy-MM-DD'T'HH:mm:ssZZ` (e.g. 2021-03-22T11:30:00-08:00)
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: The users that match the filters provided
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/csv:
+              schema:
+                $ref: '#/components/schemas/UserBulkDownload'
+              examples:
+                csv table:
+                  summary: CSV
+                  value: >
+                    username,firstname,lastname,email,phone,company_account_id,status,no_automatic_update,primary_role,roles,...
+
+                    cc_agent_735,Pat,Rowe,prowe@example.medallia.com,555-867-5309,,ACTIVE,true,Frontline,,...
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        412:
+          description: Precondition failed
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+components:
+  headers:
+    X-RateLimit-Limit-day:
+      description: The number of requests allowed in total in a 24-hour period
+      schema:
+        type: integer
+      example: 10000
+    X-RateLimit-Remaining-day:
+      description: The number of requests available to make in a 24-hour period
+      schema:
+        type: integer
+      example: 10000
+    X-RateLimit-Limit-second:
+      description: The number of requests allowed in total in a 1-second period
+      schema:
+        type: integer
+      example: 10
+    X-RateLimit-Remaining-second:
+      description: The number of requests available to make in a 1-second period
+      schema:
+        type: integer
+      example: 10
+    X-Medallia-Rpc-Request-Id:
+      description: The request ID, used by Medallia support for troubleshooting
+      schema:
+        type: string
+        format: identifier
+      example: 94615edd-d9d0-4921-8b3e-60615b3d3431
+  schemas:
+    UserSummaryList:
+      description: A list of users
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserSummary'
+        _next:
+          type: object
+          properties:
+            href:
+              type: string
+              description: Link to the next page in the result set
+              maxLength: 10240
+    UserSummary:
+      type: object
+      required:
+        - first_name
+        - last_name
+        - roles
+        - username
+      properties:
+        username:
+          type: string
+          format: identifier
+          description: The username used to identify the account
+          maxLength: 10240
+          pattern: ^[a-zA-Z0-9\\-_.@]+$
+        first_name:
+          type: string
+          description: The first name of the user
+          maxLength: 10240
+        last_name:
+          type: string
+          description: The last name of the user
+          maxLength: 10240
+        email:
+          type: string
+          format: email
+          description: The email address of the user
+        phone:
+          type: string
+          description: The phone number of the user
+          maxLength: 10240
+        automatic_update:
+          type: boolean
+          description:
+            Indicates whether the user account is able to be automatically
+            updated by Medallia ETL processes
+        excluded_from_user_activity:
+          type: boolean
+          description:
+            Indicates whether the user account is included in
+            `user-activity-account-split` nodes in Medallia AA2 reports
+        company_account_id:
+          type: string
+          description:
+            The user's account ID in the company's authentication systems,
+            set automatically during auto-logon processes
+          maxLength: 10240
+        login_blocked:
+          type: boolean
+          description:
+            Indicates whether the direct-to-Medallia user logins are
+            blocked and, as a consequence, password resets are also blocked.
+            This has no bearing on SSO-based authentication or mobile access
+            codes.
+        roles:
+          type: object
+          description: The roles of which this account is a member
+          required:
+            - primary_role
+            - extra_roles
+          properties:
+            primary_role:
+              type: object
+              description:
+                The primary role of this account, which acts as the
+                default role
+              required:
+                - role
+              properties:
+                role:
+                  type: string
+                  format: identifier
+                  maxLength: 10240
+            extra_roles:
+              type: array
+              description: Secondary roles of this account
+              items:
+                type: object
+                required:
+                  - role
+                properties:
+                  role:
+                    type: string
+                    format: identifier
+                    maxLength: 10240
+        _system_properties:
+          readOnly: true
+          type: object
+          properties:
+            status:
+              type: string
+              readOnly: true
+              description: Indicates whether the account is active
+              enum:
+                - ACTIVE
+                - INACTIVE
+            created_on:
+              type: string
+              format: date-time
+              readOnly: true
+              description:
+                The timestamp when the user account was created, in
+                ISO-8601 format `yyyy-MM-dd'T'HH:mm:ss.SSSZZ`
+            created_by:
+              type: string
+              readOnly: true
+              description:
+                The username of the account or the role of the OAuth 2.0
+                account that created this account (if manual) or
+                `null` (if the account was created through system-driven
+                processes such as SSO)
+              maxLength: 10240
+            modified_on:
+              type: string
+              format: date-time
+              readOnly: true
+              description:
+                The timestamp when the user account was last modified, in
+                ISO-8601 format `yyyy-MM-dd'T'HH:mm:ss.SSSZZ`
+            modified_by:
+              type: string
+              readOnly: true
+              description:
+                The username of the account or the role of the OAuth 2.0
+                account that last modified this account (if manual) or
+                `null` (if the account was last modified through system-driven
+                processes such as SSO)
+              maxLength: 10240
+            login_blocked_reason:
+              type: string
+              readOnly: true
+              description:
+                A human-friendly explanation of why a user account may be
+                blocked
+              enum:
+                - TOO_MANY_FAILED_LOGINS
+                - TOO_MANY_PASSWORD_RESETS
+                - MANUAL_BLOCK
+            last_login:
+              type: string
+              format: date-time
+              readOnly: true
+              description:
+                The timestamp when the user account last authenticated, in
+                ISO-8601 format `yyyy-MM-dd'T'HH:mm:ss.SSSZZ`
+            login_count:
+              type: integer
+              format: int32
+              readOnly: true
+              description: The number of successful authentications for the user
+            failed_login_count:
+              type: integer
+              format: int32
+              readOnly: true
+              description:
+                The number of sequential, unsuccessful authentications
+            password_last_set:
+              type: string
+              format: date-time
+              readOnly: true
+              description:
+                The timestamp when the account's password was last set, in
+                ISO-8601 format `yyyy-MM-dd'T'HH:mm:ss.SSSZZ`
+            password_last_emailed:
+              type: string
+              format: date-time
+              readOnly: true
+              description:
+                The timestamp when a password reset link for the account
+                was last emailed, in ISO-8601 format `yyyy-MM-dd'T'HH:mm:ss.SSSZZ`
+            password_not_set_reason:
+              type: string
+              readOnly: true
+              description: The reason why the password is not set for the account
+              enum:
+              - PASSWORD_RESET
+              - PASSWORD_EXPIRED
+              - PASSWORD_INSECURE
+              - NEW_ACCOUNT
+    User:
+      allOf:
+        - $ref: '#/components/schemas/UserSummary'
+        - type: object
+          properties:
+            data-access:
+              $ref: '#/components/schemas/UserDataAccess'
+    UserBulkDownload:
+      type: object
+      properties:
+        foo:
+          type: string
+    UserDataAccess:
+      type: object
+      description:
+        Data access ensures a user only sees the records for which they
+        have permission
+      properties:
+        organization:
+          type: array
+          description: An association between a role and a unit group
+          items:
+            type: object
+            required:
+              - role
+              - unit_group
+            properties:
+              role:
+                type: string
+                format: identifier
+                description: Role where this data access is available
+                maxLength: 10240
+              data_view:
+                type: string
+                format: identifier
+                description: Data view where this data access is available
+                maxLength: 10240
+              unit_group:
+                type: string
+                format: identifier
+                description: Unit group in the organization hierarchy
+                maxLength: 10240
+              unit_group_display_name:
+                type: string
+                description: Display name for the Unit Group
+                maxLength: 10240
+        segments:
+          type: array
+          description:
+            Segments associates the role with records meeting a specific
+            criteria based on field values in the record
+          items:
+            type: object
+            description: Reference to a survey field
+            required:
+              - field
+              - role
+            properties:
+              role:
+                type: string
+                format: identifier
+                description: Role where this data access is available
+                maxLength: 10240
+              data_view:
+                type: string
+                format: identifier
+                description: Data view where this data access is available
+                maxLength: 10240
+              field:
+                type: string
+                description: Survey Field key
+                maxLength: 10240
+              field_display_name:
+                type: string
+                description: Display name of the Survey Field
+                maxLength: 10240
+              option:
+                type: string
+                description: Field option value
+                maxLength: 10240
+  securitySchemes:
+    mecOauth:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{reporting-hostname}/oauth/{company}/token
+          scopes: {}
+security:
+  - mecOauth: []
