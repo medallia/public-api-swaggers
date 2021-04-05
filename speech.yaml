@@ -147,7 +147,7 @@ components:
           type: string
           description:
             The name of the recording file as uploaded to
-            Medillia Managed File Transfer
+            Medallia Managed File Transfer
           maxLength: 10240
         unit_identifier:
           type: string
@@ -204,10 +204,10 @@ components:
           description:
             The audio channel (when recorded in stereo) associated with
             the agent
-          default: 0
+          default: '0'
           enum:
-            - 0
-            - 1
+            - '0'
+            - '1'
         substitutions:
           type: string
           description:
@@ -246,7 +246,9 @@ components:
           maxLength: 10240
         profile_uuid:
           type: string
-          description: The unique identifier (UUID) of the customer profile
+          description:
+            The unique identifier (UUID) of the customer profile
+            (will be deprecated soon, use `connection_id` instead)
           maxLength: 10240
     ProcessingResponse:
       type: object
@@ -284,7 +286,7 @@ components:
                 type: string
                 description:
                   The name of the recording file as uploaded to
-                  Medillia Managed File Transfer
+                  Medallia Managed File Transfer
                 maxLength: 10240
               status:
                 type: string
