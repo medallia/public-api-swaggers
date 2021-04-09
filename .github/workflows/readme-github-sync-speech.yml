@@ -1,0 +1,15 @@
+name: Sync speech.yaml to ReadMe
+on:
+  push:
+    branches:
+      - main
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: readmeio/github-readme-sync@v2
+        with:
+          readme-oas-key: ${{ secrets.ReadmeIoApiKey }}:605ecf841b06fc0071ecc3fd
+          oas-file-path: ./speech.yaml

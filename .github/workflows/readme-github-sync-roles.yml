@@ -1,0 +1,15 @@
+name: Sync roles.yaml to ReadMe
+on:
+  push:
+    branches:
+      - main
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: readmeio/github-readme-sync@v2
+        with:
+          readme-oas-key: ${{ secrets.ReadmeIoApiKey }}:606e410ca6183400104a9333
+          oas-file-path: ./roles.yaml

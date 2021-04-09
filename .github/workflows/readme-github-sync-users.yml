@@ -1,4 +1,4 @@
-name: Sync OAS to ReadMe
+name: Sync users.yaml to ReadMe
 on:
   push:
     branches:
@@ -11,4 +11,5 @@ jobs:
       - uses: actions/checkout@v2
       - uses: readmeio/github-readme-sync@v2
         with:
-          readme-oas-key: ${{ secrets.ReadmeIoApiKey }}
+          readme-oas-key: ${{ secrets.ReadmeIoApiKey }}:605ece63b7fa0d0016fc9da3
+          oas-file-path: ./users.yaml
