@@ -453,29 +453,29 @@ paths:
       description: Downloads the list of users to an Excel-compatible spreadsheet
       operationId: bulkDownloadUsers
       parameters:
-        - name: companyAccountId
-          in: query
-          description: The company account id to filter results
-          required: false
-          schema:
-            type: array
-            items:
-              type: string
-          style: form
-          explode: false
-        - name: username
-          in: query
-          description: The user name to filter results
-          required: false
-          schema:
-            type: array
-            items:
-              type: string
-          style: form
-          explode: false
         - name: role
           in: query
           description: The role name to filter results
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
+        - name: id
+          in: query
+          description: The user id to filter results
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
+        - name: q
+          in: query
+          description: The search query to filter results
           required: false
           schema:
             type: string
@@ -488,28 +488,6 @@ paths:
             enum:
               - active
               - inactive
-        - name: limit
-          in: query
-          description: The maximum number of items to return per page
-          required: false
-          schema:
-            type: integer
-        - name: cursor
-          in: query
-          description:
-            The token from the previous response, used to return the next
-            page of data
-          required: false
-          schema:
-            type: string
-        - name: lastUpdatedOnOrAfter
-          in: query
-          description:
-            The last time that the user account was updated, in ISO-8601
-            format `yyyy-MM-DD'T'HH:mm:ssZZ` (e.g. 2021-03-22T11:30:00-08:00)
-          required: false
-          schema:
-            type: string
       responses:
         200:
           description: The users that match the filters provided
