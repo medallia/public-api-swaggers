@@ -11,5 +11,5 @@ jobs:
       - uses: actions/checkout@v2
       - uses: readmeio/github-readme-sync@v2
         with:
-          readme-oas-key: ${{ secrets.ReadmeIoApiKey }}:TBD
+          readme-oas-key: ${{ secrets.ReadmeIoApiKey }}:6070a8240147d400165ed8af
           oas-file-path: ./query.yaml
