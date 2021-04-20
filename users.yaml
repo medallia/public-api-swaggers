@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Users API
-  version: 1.0.0
+  version: 1.1.0
   description:
     The Medallia Users API enables auditing and management of user accounts
     in Medallia Experience Cloud.  User accounts belong to one or more roles
@@ -89,7 +89,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserSummaryList'
+                $ref: '#/components/schemas/UserList'
         401:
           description: Unauthorized
         403:
@@ -565,14 +565,14 @@ components:
         format: identifier
       example: 94615edd-d9d0-4921-8b3e-60615b3d3431
   schemas:
-    UserSummaryList:
+    UserList:
       description: A list of users
       type: object
       properties:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/UserSummary'
+            $ref: '#/components/schemas/User'
         _next:
           type: object
           properties:
@@ -580,7 +580,7 @@ components:
               type: string
               description: Link to the next page in the result set
               maxLength: 10240
-    UserSummary:
+    User:
       type: object
       required:
         - first_name
@@ -633,6 +633,8 @@ components:
             blocked and, as a consequence, password resets are also blocked.
             This has no bearing on SSO-based authentication or mobile access
             codes.
+        data-access:
+          $ref: '#/components/schemas/UserDataAccess'
         roles:
           type: object
           description: The roles of which this account is a member
@@ -758,13 +760,6 @@ components:
               - PASSWORD_EXPIRED
               - PASSWORD_INSECURE
               - NEW_ACCOUNT
-    User:
-      allOf:
-        - $ref: '#/components/schemas/UserSummary'
-        - type: object
-          properties:
-            data-access:
-              $ref: '#/components/schemas/UserDataAccess'
     UserBulkDownload:
       type: object
       properties:
