@@ -503,7 +503,7 @@ paths:
             X-Medallia-Rpc-Request-Id:
               $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
           content:
-            application/csv:
+            text/csv:
               schema:
                 $ref: '#/components/schemas/UserBulkDownload'
               examples:
