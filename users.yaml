@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Users API
-  version: 1.1.0
+  version: 1.0.0
   description:
     The Medallia Users API enables auditing and management of user accounts
     in Medallia Experience Cloud.  User accounts belong to one or more roles

@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Speech API
-  version: 1.1.0
+  version: 1.0.0
   description:
     The Medallia Speech API enables processing of audio recordings within
     Medallia Experience Cloud, including transcription and text analytics.
