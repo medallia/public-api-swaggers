@@ -213,8 +213,9 @@ components:
           additionalProperties:
             type: string
           description:
-            A set of substitutions to apply to the transcribed text, key/value
-            (original/substitute) pairs
+            A set of substitutions to apply to the transcribed text,
+            in key/value format, where the key will be replaced
+            by the value in transcription.
           default: {}
         apply_redaction:
           type: string
