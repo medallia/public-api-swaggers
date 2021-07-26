@@ -1,0 +1,463 @@
+openapi: 3.0.0
+info:
+  title: Custom Adapter API
+  version: 1.0.0
+  description:
+    An adapter service translates communications between the channel service and Medallia Conversations.
+  termsOfService: https://medallia.com/about/legal/terms/api
+servers:
+  - url: 'https://{api-gateway-hostname}'
+    variables:
+      api-gateway-hostname:
+        default: conversations.medallia.com
+        description:
+          The Medallia Experience Cloud hostname used to access
+          Medallia Reporting
+  - url: 'https://{ADAPTER_URL}'
+    variables:
+      ADAPTER_URL:
+        default: api.adatpter-host.com
+        description: Endpoint to make requests to the adapter. Must include the protocol, like https://
+
+paths:
+  /:
+    servers:
+      - url: 'https://{ADAPTER_URL}'
+        variables:
+          ADAPTER_URL:
+            default: api.adatpter-host.com
+            description: Endpoint to make requests to the adapter. Must include the protocol, like https://
+    post:
+      tags:
+        - outbound messages
+      description: Requests made by Medallia Conversations to the external custom adapter when sendingan outbound message.
+      operationId: outbound
+      parameters:
+        - in: query
+          name: access_token
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/outboundMessage'
+      responses:
+        200:
+          description: A successful response includes the customer and message IDs
+          content:
+              application/json:
+                schema: 
+                  $ref: '#/components/schemas/outBoundMessageResponse'
+  /{CUSTOMER_ID}:
+    servers:
+      - url: 'https://{ADAPTER_URL}'
+        variables:
+          ADAPTER_URL:
+            default: api.adatpter-host.com
+            description: Endpoint to make requests to the adapter. Must include the protocol, like https://
+    get:
+      tags:
+        - profile data
+      description: "GET requests that return a customer's profile data from the service based on the customer's ID."
+      operationId: profileData
+      parameters:
+        - in: path
+          name: CUSTOMER_ID
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: access_token
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: A successful response that includes the customer profile data
+          content:
+              application/json:
+                schema: 
+                  $ref: '#/components/schemas/profileDataResponse'
+
+  /apis/v0/channels/{channelGuid}/messages:
+    post: 
+      tags:
+        - Forward Messages
+        - trigger conversations
+        - send message statuses 
+      description: This is a polymorphic endpoint that can be used to forward inbound messages from the customer, trigger a new conversation, or inform the status of sent messages to Medallia Conversations. Only the payload sent changes.
+      operationId: forwardmessage
+      parameters:
+        - in: path
+          name: channelGuid
+          schema:
+            type: string
+          required: true
+      requestBody:
+        description: The request payload
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  required:
+                    - query
+                  properties:
+                    object:
+                      type: string
+                      enum: [page]
+                    entry:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/forward'
+                  additionalProperties:
+                    type: string
+                  example:
+                    object: page
+                    entry:
+                      id: '6482345-345345-24525-4542'
+                      time: '2021-03-23T13:15:37-07:00'
+                      messaging:
+                        sender:
+                          id: '6482345-345345-24525-4542'
+                        recipient:
+                          id: '6482345-345345-24525-4542'
+                        timestamp: 20493487298672
+                        message:
+                          mid: 6482345-345345-24525-4542, 6987364-24545-2452452-5234
+                          text: Hello world!
+                - type: object
+                  required:
+                    - query
+                  properties:
+                    object:
+                      type: string
+                      enum: [page]
+                    entry:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/trigger'
+                  additionalProperties:
+                    type: string
+                  example:
+                    object: "page"
+                    entry:
+                      id: '6482345-345345-24525-4542'
+                      time: '2021-03-23T13:15:37-07:00'
+                      messaging:
+                        sender:
+                          id: '6482345-345345-24525-4542'
+                        recipient:
+                          id: '6482345-345345-24525-4542'
+                        timestamp: 20493487298672
+                        message:
+                          mid: 6482345-345345-24525-4542, 6987364-24545-2452452-5234
+                          text: Hello world!
+                        trigger_parameters:
+                          override_session: true
+                          consumer:
+                            id: '8069100230017427'
+                            email: 'consumer1@comcast.com'
+                          custom:
+                            comcast_account_number: 6754354366
+                            session_id: "E-e344a585-eb0d-437f-bafd-78efa6c6cce4"
+                            channel: "Comcast-XA-aiQ-DEV"
+                            survey_type: "xa-experience-survey-prod"
+                            queue: "inva-remote_setup-tv-xapi-feedback-yes"
+                - type: object
+                  required:
+                    - query
+                  properties:
+                    object:
+                      type: string
+                      enum: [page]
+                    entry:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/status'
+                  additionalProperties:
+                    type: string
+                  example:
+                    object: page
+                    entry:
+                      id: '6482345-345345-24525-4542'
+                      time: '2021-03-23T13:15:37-07:00'
+                      messaging:
+                        sender:
+                          id: '6482345-345345-24525-4542'
+                        recipient:
+                          id: '6482345-345345-24525-4542'
+                        timestamp: 20493487298672
+                        delivery:
+                          mids: 6482345-345345-24525-4542, 6987364-24545-2452452-5234
+                          status: delivered
+                      
+      responses:
+        200:
+          description:
+            The response to the query made, only returns 'Ok'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+    get: 
+      tags:
+        - Conversations List
+      description: Requests to list conversations.
+      operationId: feedless_trigger
+      parameters:
+        - in: query
+          name: f.labels
+          description: filters by the label property
+          schema:
+            type: string
+          required: false
+        - in: path
+          name: channelGuid
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description:
+            Returns the json payload with a list of conversations.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/conversationList'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+  
+components:
+  headers:
+    Authorization:
+      description: The OAuth token.
+      schema:
+        type: string
+        format: identifier
+      example: Bearer 94615edd-d9d0-4921-8b3e-60615b3d3431
+  schemas:
+    conversationList:
+      properties:
+        items:
+          type: array
+          items:
+            properties:
+              guid:
+                type: string
+              title:
+                type: string
+              description:
+                type: string
+              keyword:
+                type: array
+                items: 
+                    type: string
+              labels:
+                type: array
+                items: 
+                    type: string
+              created_at:
+                type: string
+              updated_at:
+                type: string
+        _total:
+          type: integer
+          
+    outBoundMessageResponse:
+      properties:
+        recipient_id:
+          type: string
+        message_id:
+          type: string
+
+    profileDataResponse:
+      properties:
+        first_name:
+          type: string
+        last_name: 
+          type: string
+        profile_pic:
+          type: string
+        locale:
+          type: string
+        timezone:
+          type: string
+        phone_number:
+          type: string
+          
+    outboundMessage:
+      properties:
+        recipient:
+          properties:
+            id:
+              type: string
+              description: An identifier unique to the customer, such as phone number, email, or other channel-specific value. For phone numbers, the ID must be in E.164 format.
+        message:
+          properties:
+            text:
+              type: string
+            quick_replies:
+              type: array
+              items:
+                properties:
+                  content_type:
+                    type: string
+                  title:
+                    type: string
+                  payload:
+                    type: string
+                  image_url:
+                    type: string
+            notification_type:
+              type: string
+              enum: [REGULAR]
+
+    forward:
+      properties:
+        id:
+          type: string
+          description: Unique identifier — in Medallia Conversations — of the messaging application instance. A different instance on the adapter must have another Page ID.
+        time:
+          type: integer
+          description: Unix epoch timestamp of the last event associated with the request. For example, when it is a multi-part message, this is the time of the last message-part.
+        messaging:
+          type: array
+          items:
+            properties:
+              sender:
+                properties:
+                  id:
+                    type: string
+                    description: An identifier unique to the customer, such as phone number, email, or other channel-specific value. For phone numbers, the ID must be in E.164 format.
+              recipient:
+                properties:
+                  id:
+                    type: string
+                    description: Unique identifier in Medallia Conversations of the messaging application instance. A different instance on the adapter must have another Page ID.
+              timestamp:
+                type: integer
+              message:
+                properties:
+                  mid:
+                      type: string
+                  text:
+                    type: string
+                    description: Text message no longer than 1,600 characters. The channel service may split the message into multiple parts for delivery.
+    trigger:
+      properties:
+        id:
+          type: string
+          description: Unique identifier — in Medallia Conversations — of the messaging application instance. A different instance on the adapter must have another Page ID.
+        time:
+          type: integer
+          description: Unix epoch timestamp of the last event associated with the request. For example, when it is a multi-part message, this is the time of the last message-part.
+        messaging:
+          type: array
+          items:
+            properties:
+              sender:
+                properties:
+                  id:
+                    type: string
+                    description: An identifier unique to the customer, such as phone number, email, or other channel-specific value. For phone numbers, the ID must be in E.164 format.
+              recipient:
+                properties:
+                  id:
+                    type: string
+                    description: Unique identifier in Medallia Conversations of the messaging application instance. A different instance on the adapter must have another Page ID.
+              timestamp:
+                type: integer
+              message:
+                properties:
+                  mid:
+                      type: string
+                  text:
+                    type: string
+                    description: Text message no longer than 1,600 characters. The channel service may split the message into multiple parts for delivery.
+              trigger_parameters:
+                properties:
+                  override_session: 
+                    type: boolean
+                  consumer:
+                    properties:
+                      id: 
+                        type: string
+                      email:
+                        type: string
+                  custom:
+                    description: a dictionary with the custom parameters, these need to be mapped to e-fields in survey parameters
+                    properties:
+                      session_id:
+                        type: string
+                      channel:
+                        type: string
+                      survey_type:
+                        type: string
+                      queue:
+                        type: string
+                      e_unitid:
+                        type: string
+    status:
+      properties:
+        id:
+          type: string
+          description: Unique identifier — in Medallia Conversations — of the messaging application instance. A different instance on the adapter must have another Page ID.
+        time:
+          type: integer
+          description: Unix epoch timestamp of the last event associated with the request. For example, when it is a multi-part message, this is the time of the last message-part.
+        messaging:
+          type: array
+          items:
+            properties:
+              sender:
+                properties:
+                  id:
+                    type: string
+                    description: An identifier unique to the customer, such as phone number, email, or other channel-specific value. For phone numbers, the ID must be in E.164 format.
+              recipient:
+                properties:
+                  id:
+                    type: string
+                    description: Unique identifier in Medallia Conversations of the messaging application instance. A different instance on the adapter must have another Page ID.
+              timestamp:
+                type: integer
+              delivery:
+                properties:
+                  mids:
+                    type: array
+                    items: 
+                      type: string
+                    description: (required) Identifier for the messages sent as generated by the channel service. Used for tracking and debugging.
+                  status:
+                    type: string
+                  error:
+                    properties:
+                      code:
+                        type: string
+                        enum: [ failed, sent, delivered, undelivered ]
+                      name:
+                        type: string
+                      message:
+                        type: string
+
+  securitySchemes:
+    mecOauth:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{reporting-hostname}/oauth/{company}/token
+          scopes: {}
