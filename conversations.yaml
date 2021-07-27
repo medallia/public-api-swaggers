@@ -285,11 +285,11 @@ components:
               created_at:
                 type: string
                 format: date-time
-                description: CV: IN WHAT FORMAT?
+                description: "The date of creation in ISO-8601 UTC format (ex: yyyy-mm-ddThh:mm:ssZ)."
               updated_at:
                 type: string
                 format: date-time
-                description: CV: IN WHAT FORMAT?
+                description: "The last modification date in ISO-8601 UTC format (ex: yyyy-mm-ddThh:mm:ssZ)."
         _total:
           type: integer
           format: int64
@@ -301,16 +301,16 @@ components:
           type: string
         profile_pic:
           type: string
-          description: CV: IN WHAT FORMAT?
+          description: a publicly accessible image URL.
         locale:
           type: string
-          description: CV: IN WHAT FORMAT?
+          description: the ISO-639 or ISO-3166 country code.
         timezone:
-          type: string
-          description: CV: IN WHAT FORMAT?
+          type: integer
+          description: "Time zone offset, the number relative to GMT, (ex: -8)."
         phone_number:
           type: string
-          description: CV: IN WHAT FORMAT?
+          description: must be an E.164 format number.
     OutboundMessageRequest:
       properties:
         recipient:
@@ -358,12 +358,7 @@ components:
         id:
           type: string
           description:
-            CV - THIS NEEDS TO BE UPDATED.  It's unclear what ID
-            (channel guid, page id, etc.) it refers to.
-
-            The unique identifier — in Medallia Conversations — of the
-            messaging application instance. A different instance on the
-            adapter must have another Page ID.
+            The PageId value configured in Conversations at the creation of the channel.
         time:
           type: integer
           format: int64
@@ -388,12 +383,7 @@ components:
                   id:
                     type: string
                     description:
-                      CV - THIS NEEDS TO BE UPDATED.  It's unclear what ID
-                      (channel guid, page id, etc.) it refers to.
-
-                      Unique identifier in Medallia Conversations of the
-                      messaging application instance. A different instance
-                      on the adapter must have another Page ID.
+                      The PageId value configured in Conversations at the creation of the channel..
               timestamp:
                 type: integer
                 format: int64
@@ -416,9 +406,7 @@ components:
         id:
           type: string
           description:
-            Unique identifier — in Medallia Conversations — of the
-            messaging application instance. A different instance on the
-            adapter must have another Page ID.
+            The PageId value configured in Conversations at the creation of the channel.
         time:
           type: integer
           format: int64
@@ -443,12 +431,7 @@ components:
                   id:
                     type: string
                     description:
-                      CV - THIS NEEDS TO BE UPDATED.  It's unclear what ID
-                      (channel guid, page id, etc.) it refers to.
-
-                      Unique identifier in Medallia Conversations of the
-                      messaging application instance. A different instance
-                      on the adapter must have another Page ID.
+                      The PageId value configured in Conversations at the creation of the channel.
               timestamp:
                 type: integer
                 format: int64
@@ -476,7 +459,7 @@ components:
                     description:
                       A dictionary with the custom parameters, mapped
                       to fields in Medallia Reporting via survey
-                      parameters.
+                      parameters. Those are some example values
                     properties:
                       session_id:
                         type: string
@@ -493,12 +476,7 @@ components:
         id:
           type: string
           description:
-            CV - THIS NEEDS TO BE UPDATED.  It's unclear what ID
-            (channel guid, page id, etc.) it refers to.
-
-            Unique identifier — in Medallia Conversations — of the
-            messaging application instance. A different instance on
-            the adapter must have another Page ID.
+            The PageId value configured in Conversations at the creation of the channel.
         time:
           type: integer
           format: int64
@@ -524,12 +502,7 @@ components:
                   id:
                     type: string
                     description:
-                      CV - THIS NEEDS TO BE UPDATED.  It's unclear what ID
-                      (channel guid, page id, etc.) it refers to.
-
-                      Unique identifier — in Medallia Conversations — of the
-                      messaging application instance. A different instance on
-                      the adapter must have another Page ID.
+                      The PageId value configured in Conversations at the creation of the channel.
               timestamp:
                 type: integer
                 format: int64
