@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: Conversations Channel Adapter API
+  title: Conversations API
   version: 1.0.0
   description:
     Medallia Conversations enables communications with customers and employees
