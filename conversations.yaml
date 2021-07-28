@@ -396,18 +396,11 @@ components:
                 the identifier must be in E.164 format.
         sender_action:
           type: string
+          enum: [ conversation_ended ]
           description: The value is always 'conversation_ended'.
         reason:
           type: string
-          description:
-            "The reason the conversation has ended. \
-            'complete': The conversation \ reached the end.\
-             The signal is sent after the last dialog message. \
-            'optout': The respondent opted-out during the conversation. \
-            'expired': Sent after attempt to interact with an expired conversation.\
-            'sampling': The respondent excluded from survey due to Quarantine filter in sampling.\
-            'failed': When an error has occured"
-          enum: [ complete, optout, expired, failed, sampling ]
+          description: The reason the conversation has ended.
     OutboundMessageResponse:
       properties:
         recipient_id:
