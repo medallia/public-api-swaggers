@@ -50,11 +50,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OutboundMessageRequest'
+              oneOf:
+                - $ref: '#/components/schemas/OutboundMessageRequest'
+                - $ref: '#/components/schemas/EndOfConversationSignal'
       responses:
         200:
           description: 
-            A successful response includes the customer and message IDs
+            A successful response includes the customer and message IDs.
           content:
               application/json:
                 schema:
@@ -73,9 +75,9 @@ paths:
         - Channel Adapter Services
       description:
         Returns a customer's profile data for use in Medallia
-        Conversations' reporting interfaces. There are no required fields. 
-        The adapter returns whatever it can, and it may return an empty
-        response.
+        Conversations' reporting interfaces. All fields returned 
+        by the adapter are optional. The adapter returns whatever
+        it can, and it may return an empty response.
       parameters:
         - in: path
           name: customer-id
@@ -90,7 +92,8 @@ paths:
       responses:
         200:
           description:
-            The customer's profile data.
+            The customer's profile data. If the customer id provided 
+            is not found, an empty response should be returned.
           content:
               application/json:
                 schema:
@@ -128,8 +131,6 @@ paths:
             schema:
               oneOf:
                 - type: object
-                  required:
-                    - query
                   properties:
                     object:
                       type: string
@@ -155,8 +156,6 @@ paths:
                           mid: 6482345-345345-24525-4542, 6987364-24545-2452452-5234
                           text: Hello world!
                 - type: object
-                  required:
-                    - query
                   properties:
                     object:
                       type: string
@@ -191,8 +190,6 @@ paths:
                             channel: "Orion-DEV"
                             survey_type: "post-purchase-survey-prod"
                 - type: object
-                  required:
-                    - query
                   properties:
                     object:
                       type: string
@@ -220,9 +217,11 @@ paths:
 
       responses:
         200:
-          description: The request was processed as expected
+          description: The request was processed as expected.
         401:
-          description: Unauthorized. The reason is provided in the body
+          description: 
+            Unauthorized. The reason is provided in the body as 
+            a human-readable string.
           content:
             text/plain:
                 schema:
@@ -234,13 +233,22 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         500:
-          description: Internal server error
+          description: Internal server error.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
       security:
         - conversationsOauth: []
+  /apis/v0/channels/{channel-guid}/conversations:
+    servers:
+      - url: 'https://{conversations-api-gateway-hostname}'
+        variables:
+          api-gateway-hostname:
+            default: conversations.sc4.medallia.com
+            description:
+              The Medallia Experience Cloud hostname used to access
+              Medallia Conversations' API gateway.  
     get:
       tags:
         - Conversations Services
@@ -268,7 +276,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/ConversationsList'
         401:
-          description: Unauthorized. The reason is provided in the body
+          description: 
+            Unauthorized. The reason is provided in the body
+            as a human-readable string.
           content:
             text/plain:
                 schema:
@@ -280,7 +290,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
         500:
-          description: Internal server error
+          description: Internal server error.
           content:
             application/json:
               schema:
@@ -317,7 +327,7 @@ components:
               updated_at:
                 type: string
                 format: date-time
-                description: "The updated date in ISO-8601 UTC format (ex: yyyy-mm-ddThh:mm:ssZ)."
+                description: "The last modification date in ISO-8601 UTC format (ex: yyyy-mm-ddThh:mm:ssZ)."
         _total:
           type: integer
           format: int64
@@ -374,6 +384,30 @@ components:
             notification_type:
               type: string
               enum: [REGULAR, CUSTOM]
+    EndOfConversationSignal:
+      properties:
+        recipient:
+          properties:
+            id:
+              type: string
+              description:
+                An identifier unique to the customer, such as phone number,
+                email, or another channel-specific value. For phone numbers,
+                the identifier must be in E.164 format.
+        sender_action:
+          type: string
+          description: The value is always 'conversation_ended'.
+        reason:
+          type: string
+          description:
+            "The reason the conversation has ended. \
+            'complete': The conversation \ reached the end.\
+             The signal is sent after the last dialog message. \
+            'optout': The respondent opted-out during the conversation. \
+            'expired': Sent after attempt to interact with an expired conversation.\
+            'sampling': The respondent excluded from survey due to Quarantine filter in sampling.\
+            'failed': When an error has occured"
+          enum: [ complete, optout, expired, failed, sampling ]
     OutboundMessageResponse:
       properties:
         recipient_id:
@@ -383,6 +417,7 @@ components:
             request.
         message_id:
           type: string
+          format: uuid
           description:
             A unique identifier for the message, assigned by the
             channel adapter.
@@ -505,18 +540,10 @@ components:
                     description:
                       A dictionary with the custom parameters, mapped
                       to fields in Medallia Reporting via survey
-                      parameters. Those are some example values
-                    properties:
-                      session_id:
-                        type: string
-                      channel:
-                        type: string
-                      survey_type:
-                        type: string
-                      queue:
-                        type: string
-                      e_unitid:
-                        type: string
+                      parameters.
+                    type: object
+                    additionalProperties: 
+                      type: string
     DeliveryStatusUpdate:
       properties:
         id:
@@ -526,7 +553,7 @@ components:
             the channel is created.
         time:
           type: integer
-          format: int32
+          format: int64
           description:
             Unix epoch timestamp of the last event associated with
             the request. For example, when it is a multi-part message,
@@ -560,6 +587,7 @@ components:
                 properties:
                   mids:
                     type: array
+                    format: uuid
                     items:
                       type: string
                     description:
@@ -581,12 +609,13 @@ components:
       properties:
         statusCode:
           type: integer
+          description: The HTTP status code.
         error:
           type: string
           description: The error code.
         message: 
           type: string
-          description: The error message
+          description: The error message.
   securitySchemes:
     conversationsOauth:
       type: oauth2
