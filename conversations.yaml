@@ -3,10 +3,11 @@ info:
   title: Conversations API
   version: 1.0.0
   description:
-    Medallia Conversations enables communications with customers and employees
-    through a conversational service such as SMS, Facebook Messenger, WhatsApp,
-    and more.  A channel adapter connects Medallia Conversations with the end
-    user device, handling the device-specific communications as needed.
+    Medallia Conversations enables communications with customers and 
+    employees through a conversational service such as SMS, 
+    Facebook Messenger, WhatsApp, and more.  A channel adapter
+    connects Medallia Conversations with the end user device, 
+    handling the device-specific communications as needed.
   termsOfService: https://medallia.com/about/legal/terms/api
 servers:
   - url: 'https://{conversations-api-gateway-hostname}'
@@ -52,7 +53,8 @@ paths:
               $ref: '#/components/schemas/OutboundMessageRequest'
       responses:
         200:
-          description: A successful response includes the customer and message IDs
+          description: 
+            A successful response includes the customer and message IDs
           content:
               application/json:
                 schema:
@@ -71,7 +73,9 @@ paths:
         - Channel Adapter Services
       description:
         Returns a customer's profile data for use in Medallia
-        Conversations' reporting interfaces.
+        Conversations' reporting interfaces. There are no required fields. 
+        The adapter returns whatever it can, and it may return an empty
+        response.
       parameters:
         - in: path
           name: customer-id
@@ -218,11 +222,23 @@ paths:
         200:
           description: The request was processed as expected
         401:
-          description: Unauthorized
+          description: Unauthorized. The reason is provided in the body
+          content:
+            text/plain:
+                schema:
+                  type: string
         403:
           description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         500:
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
         - conversationsOauth: []
     get:
@@ -252,11 +268,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/ConversationsList'
         401:
-          description: Unauthorized
+          description: Unauthorized. The reason is provided in the body
+          content:
+            text/plain:
+                schema:
+                  type: string
         403:
           description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         500:
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
         - conversationsOauth: []
 components:
@@ -289,7 +317,7 @@ components:
               updated_at:
                 type: string
                 format: date-time
-                description: "The last modification date in ISO-8601 UTC format (ex: yyyy-mm-ddThh:mm:ssZ)."
+                description: "The updated date in ISO-8601 UTC format (ex: yyyy-mm-ddThh:mm:ssZ)."
         _total:
           type: integer
           format: int64
@@ -301,16 +329,21 @@ components:
           type: string
         profile_pic:
           type: string
-          description: a publicly accessible image URL.
+          format: uri
+          description: 
+            A publicly-accessible URL to the customer's avatar or 
+            profile picture.
         locale:
           type: string
-          description: the ISO-639 or ISO-3166 country code.
+          description: The ISO-639 or ISO-3166 country code.
         timezone:
           type: integer
+          format: int64
           description: "Time zone offset, the number relative to GMT, (ex: -8)."
         phone_number:
           type: string
-          description: must be an E.164 format number.
+          pattern: ^\+[1-9]\d{1,14}$
+          description: The customer's phone number, in E.164 format.
     OutboundMessageRequest:
       properties:
         recipient:
@@ -340,7 +373,7 @@ components:
                     format: uri
             notification_type:
               type: string
-              enum: [REGULAR]
+              enum: [REGULAR, CUSTOM]
     OutboundMessageResponse:
       properties:
         recipient_id:
@@ -358,7 +391,8 @@ components:
         id:
           type: string
           description:
-            The PageId value configured in Conversations at the creation of the channel.
+            The PageId value configured in Medallia Conversations when 
+            the channel is created.
         time:
           type: integer
           format: int64
@@ -383,7 +417,8 @@ components:
                   id:
                     type: string
                     description:
-                      The PageId value configured in Conversations at the creation of the channel..
+                      The PageId value configured in Conversations at the 
+                      creation of the channel.
               timestamp:
                 type: integer
                 format: int64
@@ -395,6 +430,10 @@ components:
                 properties:
                   mid:
                     type: string
+                    format: uuid
+                    description:
+                     An identifier for the message sent. Used for tracking 
+                     and debugging.
                   text:
                     type: string
                     description:
@@ -406,7 +445,8 @@ components:
         id:
           type: string
           description:
-            The PageId value configured in Conversations at the creation of the channel.
+            The PageId value configured in Medallia Conversations when 
+            the channel is created.
         time:
           type: integer
           format: int64
@@ -431,7 +471,8 @@ components:
                   id:
                     type: string
                     description:
-                      The PageId value configured in Conversations at the creation of the channel.
+                      The PageId value configured in Medallia Conversations 
+                      when the channel is created.
               timestamp:
                 type: integer
                 format: int64
@@ -439,6 +480,10 @@ components:
                 properties:
                   mid:
                     type: string
+                    format: uuid
+                    description:
+                     An identifier for the message sent. Used for tracking 
+                     and debugging.
                   text:
                     type: string
                     description:
@@ -455,6 +500,7 @@ components:
                         type: string
                       email:
                         type: string
+                        format: email
                   custom:
                     description:
                       A dictionary with the custom parameters, mapped
@@ -476,10 +522,11 @@ components:
         id:
           type: string
           description:
-            The PageId value configured in Conversations at the creation of the channel.
+            The PageId value configured in Medallia Conversations when 
+            the channel is created.
         time:
           type: integer
-          format: int64
+          format: int32
           description:
             Unix epoch timestamp of the last event associated with
             the request. For example, when it is a multi-part message,
@@ -502,18 +549,21 @@ components:
                   id:
                     type: string
                     description:
-                      The PageId value configured in Conversations at the creation of the channel.
+                      The PageId value configured in Medallia Conversations when 
+                      the channel is created.
               timestamp:
                 type: integer
                 format: int64
               delivery:
+                required:
+                  - mids
                 properties:
                   mids:
                     type: array
                     items:
                       type: string
                     description:
-                      (required) Identifier for the messages sent as
+                      The identifier for the messages sent as
                       generated by the channel service. Used for tracking
                       and debugging.
                   status:
@@ -527,6 +577,16 @@ components:
                         type: string
                       message:
                         type: string
+    ErrorResponse:
+      properties:
+        statusCode:
+          type: integer
+        error:
+          type: string
+          description: The error code.
+        message: 
+          type: string
+          description: The error message
   securitySchemes:
     conversationsOauth:
       type: oauth2
