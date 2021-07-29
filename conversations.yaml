@@ -394,14 +394,14 @@ components:
             quick_replies:
               type: array
               description:
-                Optional array of object containing the response options.
+                Optional array of objects containing the response options.
               items:
                 properties:
                   content_type:
                     type: string
                     description: 
-                      The type of the payload. Conversations will always
-                      send 'text' in this field.
+                      The type of the payload field. Conversations will always
+                      send the value 'text' in this field.
                   title:
                     type: string
                     description:
@@ -411,7 +411,7 @@ components:
                     format: uuid
                     description: 
                       	Unique identifier of the quick reply option. 
-                      	The adapter can send this as the user response, 
+                      	The adapter can send this as the user's response, 
                       	when the quick reply option is chosen.
                   image_url:
                     type: string
@@ -681,7 +681,6 @@ components:
                 required:
                   - mids
                   - status
-                  
                 properties:
                   mids:
                     type: array
