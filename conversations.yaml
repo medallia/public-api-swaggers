@@ -216,7 +216,6 @@ paths:
                       delivery:
                         mids: 6482345-345345-24525-4542, 6987364-24545-2452452-5234
                         status: delivered
-
       responses:
         200:
           description: The request was processed as expected.
