@@ -3,10 +3,10 @@ info:
   title: Conversations API
   version: 1.0.0
   description:
-    Medallia Conversations enables communications with customers and 
-    employees through a conversational service such as SMS, 
+    Medallia Conversations enables communications with customers and
+    employees through a conversational service such as SMS,
     Facebook Messenger, WhatsApp, and more.  A channel adapter
-    connects Medallia Conversations with the end user device, 
+    connects Medallia Conversations with the end user device,
     handling the device-specific communications as needed.
   termsOfService: https://medallia.com/about/legal/terms/api
 servers:
@@ -55,7 +55,7 @@ paths:
                 - $ref: '#/components/schemas/EndOfConversationSignal'
       responses:
         200:
-          description: 
+          description:
             A successful response includes the customer and message IDs.
           content:
               application/json:
@@ -77,7 +77,7 @@ paths:
         - Channel Adapter Services
       description:
         Returns a customer's profile data for use in Medallia
-        Conversations' reporting interfaces. All fields returned 
+        Conversations' reporting interfaces. All fields returned
         by the adapter are optional. The adapter returns whatever
         it can, and it may return an empty response.
       parameters:
@@ -94,7 +94,7 @@ paths:
       responses:
         200:
           description:
-            The customer's profile data. If the customer id provided 
+            The customer's profile data. If the customer id provided
             is not found, an empty response should be returned.
           content:
               application/json:
@@ -103,7 +103,9 @@ paths:
         401:
           description: Unauthorized.
         404:
-          description: Not Found, Expect when the customer id is not found by the adapter.
+          description:
+            A customer profile for the customer id provided was
+            not found.
   /apis/v0/channels/{channel-guid}/messages:
     servers:
       - url: 'https://{conversations-api-gateway-hostname}'
@@ -225,14 +227,15 @@ paths:
         200:
           description: The request was processed as expected.
         401:
-          description: 
-            Unauthorized error response.
+          description:
+            Unauthorized. The reason is provided in the body
+            as a human-readable string.
           content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+            text/plain:
+                schema:
+                  type: string
         403:
-          description: Forbidden
+          description: Forbidden.
           content:
             application/json:
               schema:
@@ -253,7 +256,7 @@ paths:
             default: conversations.sc4.medallia.com
             description:
               The Medallia Experience Cloud hostname used to access
-              Medallia Conversations' API gateway.  
+              Medallia Conversations' API gateway.
     get:
       tags:
         - Conversations Services
@@ -281,7 +284,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ConversationsList'
         401:
-          description: 
+          description:
             Unauthorized. The reason is provided in the body
             as a human-readable string.
           content:
@@ -305,10 +308,14 @@ paths:
 components:
   schemas:
     ConversationsList:
+      type: object
+      required:
+        - _total
       properties:
         items:
           type: array
           items:
+            type: object
             required:
               - guid
               - title
@@ -328,11 +335,11 @@ components:
               keyword:
                 type: array
                 items:
-                    type: string
+                  type: string
               labels:
                 type: array
                 items:
-                    type: string
+                  type: string
               created_at:
                 type: string
                 format: date-time
@@ -345,6 +352,7 @@ components:
           type: integer
           format: int64
     CustomerProfileData:
+      type: object
       properties:
         first_name:
           type: string
@@ -353,8 +361,8 @@ components:
         profile_pic:
           type: string
           format: uri
-          description: 
-            A publicly-accessible URL to the customer's avatar or 
+          description:
+            A publicly-accessible URL to the customer's avatar or
             profile picture.
         locale:
           type: string
@@ -368,12 +376,14 @@ components:
           pattern: ^\+[1-9]\d{1,14}$
           description: The customer's phone number, in E.164 format.
     OutboundMessageRequest:
+      type: object
       required:
         - recipient
         - message
         - notification_type
       properties:
         recipient:
+          type: object
           required:
             - id
           properties:
@@ -384,44 +394,47 @@ components:
                 email, or another channel-specific value. For phone numbers,
                 the identifier must be in E.164 format.
         message:
+          type: object
           required:
             - text
           properties:
             text:
               type: string
-              description: 
-                A text respresenting the question being asked.
+              description:
+                The text of the question being asked.
             quick_replies:
               type: array
               description:
                 Optional array of objects containing the response options.
               items:
+                type: object
                 properties:
                   content_type:
                     type: string
-                    description: 
-                      The type of the payload field. Conversations will always
-                      send the value 'text' in this field.
+                    description:
+                      The type of the payload field.
+                    enum: [ text ]
                   title:
                     type: string
                     description:
-                      A text representing a response option to the question.
+                      Text of a response option to the question.
                   payload:
                     type: string
                     format: uuid
-                    description: 
-                      	Unique identifier of the quick reply option. 
-                      	The adapter can send this as the user's response, 
+                    description:
+                      	Unique identifier of the quick reply option.
+                      	The adapter can send this as the user's response,
                       	when the quick reply option is chosen.
                   image_url:
                     type: string
                     format: uri
             attachments:
               type: array
-              description: 
+              description:
                 An optional array containing files or a location
-                object attached to the message. 
+                object attached to the message.
               items:
+                type: object
                 required:
                   - type
                   - payload
@@ -436,16 +449,17 @@ components:
                         type: string
                         format: uri
                         description: The attachment url.
-                      data: 
+                      data:
                         type: string
                         format: byte
                         description: The attached file content.
                       metadata:
-                        description: 
+                        type: object
+                        description:
                           If data was provided instead of url, this object should
-                          include the mime type and exptension of the attachment.
+                          include the MIME type and extension of the attachment.
                         required:
-                          - mime 
+                          - mime
                           - extension
                         properties:
                           mime:
@@ -454,7 +468,8 @@ components:
                             type: string
                             description: The attachment file extension.
                       coordinates:
-                        required: 
+                        type: object
+                        required:
                           - lat
                           - long
                         properties:
@@ -465,15 +480,17 @@ components:
                             type: number
                             format: float
         notification_type:
-              type: string
-              enum: [REGULAR, CUSTOM]
+          type: string
+          enum: [REGULAR, CUSTOM]
     EndOfConversationSignal:
+      type: object
       required:
         - recipient
         - sender_action
         - reason
       properties:
         recipient:
+          type: object
           properties:
             id:
               type: string
@@ -484,11 +501,11 @@ components:
         sender_action:
           type: string
           enum: [ conversation_ended ]
-          description: The value is always 'conversation_ended'.
         reason:
           type: string
           description: The reason the conversation has ended.
     OutboundMessageResponse:
+      type: object
       required:
         - recipient_id
         - message_id
@@ -505,6 +522,7 @@ components:
             A unique identifier for the message, assigned by the
             channel adapter.
     ForwardedMessage:
+      type: object
       required:
         - id
         - time
@@ -513,7 +531,7 @@ components:
         id:
           type: string
           description:
-            The PageId value configured in Medallia Conversations when 
+            The PageId value configured in Medallia Conversations when
             the channel is created.
         time:
           type: integer
@@ -525,8 +543,10 @@ components:
         messaging:
           type: array
           items:
+            type: object
             properties:
               sender:
+                type: object
                 properties:
                   id:
                     type: string
@@ -535,11 +555,12 @@ components:
                       number, email, or other channel-specific value.
                       For phone numbers, the ID must be in E.164 format.
               recipient:
+                type: object
                 properties:
                   id:
                     type: string
                     description:
-                      The PageId value configured in Conversations at the 
+                      The PageId value configured in Conversations at the
                       creation of the channel.
               timestamp:
                 type: integer
@@ -549,6 +570,7 @@ components:
                   request. For example, when it is a multi-part message, this
                   is the time of the last message-part.
               message:
+                type: object
                 required:
                   - mid
                   - text
@@ -556,7 +578,7 @@ components:
                   mid:
                     type: string
                     description:
-                     An identifier for the message sent. Used by the adapter to 
+                     An identifier for the message sent. Used by the adapter to
                      track the messages.
                   text:
                     type: string
@@ -565,6 +587,7 @@ components:
                       The channel service may split the message into
                       multiple parts for delivery.
     ConversationTrigger:
+      type: object
       required:
         - id
         - time
@@ -573,7 +596,7 @@ components:
         id:
           type: string
           description:
-            The PageId value configured in Medallia Conversations when 
+            The PageId value configured in Medallia Conversations when
             the channel is created.
         time:
           type: integer
@@ -585,8 +608,10 @@ components:
         messaging:
           type: array
           items:
+            type: object
             properties:
               sender:
+                type: object
                 properties:
                   id:
                     type: string
@@ -595,33 +620,37 @@ components:
                       number, email, or other channel-specific value.
                       For phone numbers, the ID must be in E.164 format.
               recipient:
+                type: object
                 properties:
                   id:
                     type: string
                     description:
-                      The PageId value configured in Medallia Conversations 
+                      The PageId value configured in Medallia Conversations
                       when the channel is created.
               timestamp:
                 type: integer
                 format: int64
               message:
+                type: object
                 required:
                   - mid
                   - text
                 properties:
                   mid:
                     type: string
-                    description: An identifier for the message sent. Used by the adapter to 
+                    description: An identifier for the message sent. Used by the adapter to
                      track the messages.
                   text:
                     type: string
                     description:
                       The conversation's keyword or the conversations UUID.
               trigger_parameters:
+                type: object
                 properties:
                   override_session:
                     type: boolean
                   consumer:
+                    type: object
                     properties:
                       id:
                         type: string
@@ -634,9 +663,10 @@ components:
                       to fields in Medallia Reporting via survey
                       parameters.
                     type: object
-                    additionalProperties: 
+                    additionalProperties:
                       type: string
     DeliveryStatusUpdate:
+      type: object
       required:
         - id
         - time
@@ -645,7 +675,7 @@ components:
         id:
           type: string
           description:
-            The PageId value configured in Medallia Conversations when 
+            The PageId value configured in Medallia Conversations when
             the channel is created.
         time:
           type: integer
@@ -657,8 +687,10 @@ components:
         messaging:
           type: array
           items:
+            type: object
             properties:
               sender:
+                type: object
                 properties:
                   id:
                     type: string
@@ -668,16 +700,18 @@ components:
                       value. For phone numbers, the ID must be in
                       E.164 format.
               recipient:
+                type: object
                 properties:
                   id:
                     type: string
                     description:
-                      The PageId value configured in Medallia Conversations when 
+                      The PageId value configured in Medallia Conversations when
                       the channel is created.
               timestamp:
                 type: integer
                 format: int64
               delivery:
+                type: object
                 required:
                   - mids
                   - status
@@ -686,11 +720,12 @@ components:
                     type: array
                     items:
                       type: string
-                    description: An array of message Ids. Used by the adapter to 
+                    description: An array of message Ids. Used by the adapter to
                      track the messages.
                   status:
                     type: string
                   error:
+                    type: object
                     required:
                       - code
                       - message
@@ -704,6 +739,7 @@ components:
                       message:
                         type: string
     ErrorResponse:
+      type: object
       required:
         - statusCode
         - error
@@ -715,7 +751,7 @@ components:
         error:
           type: string
           description: The error code.
-        message: 
+        message:
           type: string
           description: The error message.
   securitySchemes:
