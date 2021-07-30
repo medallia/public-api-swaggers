@@ -43,9 +43,16 @@ paths:
       parameters:
         - in: query
           name: access_token
+          description:
+            The access token is a shared token defined when creating
+            the channel adapter in Medallia Conversations.  It is
+            free-form text, but Medallia recommends using a
+            cryptographically-secure token such as a UUID or other
+            random nonce value.
           schema:
             type: string
           required: true
+          example: 7f0e8b1f-81a1-41ec-8446-347df7318594
       requestBody:
         content:
           application/json:
@@ -83,14 +90,27 @@ paths:
       parameters:
         - in: path
           name: customer-id
+          description:
+            An identifier unique to the customer, such as
+            phone number, email, or other channel-specific
+            value. For phone numbers, the ID must be in
+            E.164 format.
           schema:
             type: string
           required: true
+          example: jsmith@example.medallia.com
         - in: query
           name: access_token
+          description:
+            The access token is a shared token defined when creating
+            the channel adapter in Medallia Conversations.  It is
+            free-form text, but Medallia recommends using a
+            cryptographically-secure token such as a UUID or other
+            random nonce value.
           schema:
             type: string
           required: true
+          example: 7f0e8b1f-81a1-41ec-8446-347df7318594
       responses:
         200:
           description:
@@ -128,9 +148,13 @@ paths:
       parameters:
         - in: path
           name: channel-guid
+          description:
+            The _Channel ID_ assigned by Medallia Conversations when
+            the channel is created.
           schema:
             type: string
           required: true
+          example: 4a6dfb90-f06f-11eb-8694-49649f7d8b3a
       requestBody:
         description: The request payload
         required: true
@@ -259,15 +283,20 @@ paths:
       parameters:
         - in: query
           name: f.labels
-          description: filters by the label property
+          description:
+            Filters the returned values by the conversation's label.
           schema:
             type: string
           required: false
         - in: path
           name: channel-guid
+          description:
+            The _Channel ID_ assigned by Medallia Conversations when
+            the channel is created.
           schema:
             type: string
           required: true
+          example: 4a6dfb90-f06f-11eb-8694-49649f7d8b3a
       responses:
         200:
           description:
