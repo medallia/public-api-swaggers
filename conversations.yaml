@@ -137,91 +137,85 @@ paths:
         content:
           application/json:
             schema:
-              oneOf:
-                - type: object
-                  properties:
-                    object:
-                      type: string
-                      enum: [page]
-                    entry:
-                      type: array
-                      items:
-                        $ref: '#/components/schemas/ForwardedMessage'
-                  additionalProperties:
-                    type: string
-                  example:
-                    object: page
-                    entry:
-                      id: '6482345-345345-24525-4542'
-                      time: '2021-03-23T13:15:37-07:00'
-                      messaging:
-                        sender:
-                          id: '6482345-345345-24525-4542'
-                        recipient:
-                          id: '6482345-345345-24525-4542'
-                        timestamp: 20493487298672
-                        message:
-                          mid: 6482345-345345-24525-4542, 6987364-24545-2452452-5234
-                          text: Hello world!
-                - type: object
-                  properties:
-                    object:
-                      type: string
-                      enum: [page]
-                    entry:
-                      type: array
-                      items:
-                        $ref: '#/components/schemas/ConversationTrigger'
-                  additionalProperties:
-                    type: string
-                  example:
-                    object: "page"
-                    entry:
-                      id: '6482345-345345-24525-4542'
-                      time: '2021-03-23T13:15:37-07:00'
-                      messaging:
-                        sender:
-                          id: '6482345-345345-24525-4542'
-                        recipient:
-                          id: '6482345-345345-24525-4542'
-                        timestamp: 20493487298672
-                        message:
-                          mid: 6482345-345345-24525-4542, 6987364-24545-2452452-5234
-                          text: convoTest!
-                        trigger_parameters:
-                          override_session: true
-                          consumer:
-                            id: '8069100230017427'
-                            email: 'consumer1@example.com'
-                          custom:
-                            session_id: "e123456789-eb0d-437f-bafd-78efa6c6cce4"
-                            channel: "Orion-DEV"
-                            survey_type: "post-purchase-survey-prod"
-                - type: object
-                  properties:
-                    object:
-                      type: string
-                      enum: [page]
-                    entry:
-                      type: array
-                      items:
-                        $ref: '#/components/schemas/DeliveryStatusUpdate'
-                  additionalProperties:
-                    type: string
-                  example:
-                    object: page
-                    entry:
-                      id: '6482345-345345-24525-4542'
-                      time: '2021-03-23T13:15:37-07:00'
-                      messaging:
-                        sender:
-                          id: '6482345-345345-24525-4542'
-                        recipient:
-                          id: '6482345-345345-24525-4542'
-                        timestamp: 20493487298672
-                        delivery:
-                          mids: 6482345-345345-24525-4542, 6987364-24545-2452452-5234
-                          status: delivered
+              type: object
+              properties:
+                object:
+                  type: string
+                  enum: [page]
+                entry:
+                  type: array
+                  items:
+                    oneOf:
+                      - $ref: '#/components/schemas/ForwardedMessage'
+                      - $ref: '#/components/schemas/ConversationTrigger'
+                      - $ref: '#/components/schemas/DeliveryStatusUpdate'
+              additionalProperties:
+                type: string
+            examples:
+              forwardedMessage:
+                summary:
+                  A message forwarded from the end user through
+                  the channel adapter to Medallia Conversations.
+                value:
+                  object: page
+                  entry:
+                    id: '6482345-345345-24525-4542'
+                    time: '2021-03-23T13:15:37-07:00'
+                    messaging:
+                      sender:
+                        id: '6482345-345345-24525-4542'
+                      recipient:
+                        id: '6482345-345345-24525-4542'
+                      timestamp: 20493487298672
+                      message:
+                        mid: 6482345-345345-24525-4542, 6987364-24545-2452452-5234
+                        text: Hello world!
+              conversationTrigger:
+                summary:
+                  A request to start a Conversation engagement
+                  for an end user.
+                value:
+                  object: "page"
+                  entry:
+                    id: '6482345-345345-24525-4542'
+                    time: '2021-03-23T13:15:37-07:00'
+                    messaging:
+                      sender:
+                        id: '6482345-345345-24525-4542'
+                      recipient:
+                        id: '6482345-345345-24525-4542'
+                      timestamp: 20493487298672
+                      message:
+                        mid: 6482345-345345-24525-4542, 6987364-24545-2452452-5234
+                        text: convoTest!
+                      trigger_parameters:
+                        override_session: true
+                        consumer:
+                          id: '8069100230017427'
+                          email: 'consumer1@example.com'
+                        custom:
+                          session_id: "e123456789-eb0d-437f-bafd-78efa6c6cce4"
+                          channel: "Orion-DEV"
+                          survey_type: "post-purchase-survey-prod"
+              deliveryStatusUpdate:
+                summary:
+                  An update by the channel adapter to Medallia
+                  Conversations, indicating the delivery status
+                  of an outbound message.
+                value:
+                  object: page
+                  entry:
+                    id: '6482345-345345-24525-4542'
+                    time: '2021-03-23T13:15:37-07:00'
+                    messaging:
+                      sender:
+                        id: '6482345-345345-24525-4542'
+                      recipient:
+                        id: '6482345-345345-24525-4542'
+                      timestamp: 20493487298672
+                      delivery:
+                        mids: 6482345-345345-24525-4542, 6987364-24545-2452452-5234
+                        status: delivered
 
       responses:
         200:
@@ -578,8 +572,8 @@ components:
                   mid:
                     type: string
                     description:
-                     An identifier for the message sent. Used by the adapter to
-                     track the messages.
+                     An identifier for the message sent. Used by the
+                     adapter to track the messages.
                   text:
                     type: string
                     description:
@@ -638,8 +632,9 @@ components:
                 properties:
                   mid:
                     type: string
-                    description: An identifier for the message sent. Used by the adapter to
-                     track the messages.
+                    description:
+                      An identifier for the message sent. Used by the
+                      adapter to track the messages.
                   text:
                     type: string
                     description:
@@ -705,8 +700,8 @@ components:
                   id:
                     type: string
                     description:
-                      The PageId value configured in Medallia Conversations when
-                      the channel is created.
+                      The PageId value configured in Medallia Conversations
+                      when the channel is created.
               timestamp:
                 type: integer
                 format: int64
@@ -720,8 +715,9 @@ components:
                     type: array
                     items:
                       type: string
-                    description: An array of message Ids. Used by the adapter to
-                     track the messages.
+                    description:
+                      An array of message IDs. Used by the adapter to
+                      track the messages.
                   status:
                     type: string
                   error:
