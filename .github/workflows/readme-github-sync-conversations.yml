@@ -1,0 +1,15 @@
+name: Sync conversations.yaml to ReadMe
+on:
+  push:
+    branches:
+      - main
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: readmeio/github-readme-sync@v2
+        with:
+          readme-oas-key: ${{ secrets.ReadmeIoApiKey }}:61035cfaf45dafcfc5752d1a
+          oas-file-path: ./conversations.yaml
