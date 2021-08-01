@@ -212,7 +212,7 @@ paths:
                       message:
                         mid: 6482345-345345-24525-4542, 6987364-24545-2452452-5234
                         text: convoTest!
-                      trigger_parameters:
+                      trigger_params:
                         override_session: true
                         consumer:
                           id: '8069100230017427'
@@ -667,7 +667,7 @@ components:
                     type: string
                     description:
                       The conversation's keyword or the conversations UUID.
-              trigger_parameters:
+              trigger_params:
                 type: object
                 properties:
                   override_session:
