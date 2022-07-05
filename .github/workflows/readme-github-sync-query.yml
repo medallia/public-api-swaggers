@@ -8,8 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: readmeio/github-readme-sync@v2
+      - uses: actions/checkout@v3
+      - uses: readmeio/rdme@7.3.0
         with:
-          readme-oas-key: ${{ secrets.ReadmeIoApiKey }}:6070a8240147d400165ed8af
-          oas-file-path: ./query.yaml
+          rdme: openapi ./query.yaml --key=${{ secrets.ReadmeIoApiKey }} --id=6070a8240147d400165ed8af

@@ -8,8 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: readmeio/github-readme-sync@v2
+      - uses: actions/checkout@v3
+      - uses: readmeio/rdme@7.3.0
         with:
-          readme-oas-key: ${{ secrets.ReadmeIoApiKey }}:605ecf841b06fc0071ecc3fd
-          oas-file-path: ./speech.yaml
+          rdme: openapi ./speech.yaml --key=${{ secrets.ReadmeIoApiKey }} --id=605ecf841b06fc0071ecc3fd
