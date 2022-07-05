@@ -8,8 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: readmeio/github-readme-sync@v2
+      - uses: actions/checkout@v3
+      - uses: readmeio/rdme@7.3.0
         with:
-          readme-oas-key: ${{ secrets.ReadmeIoVociApiKey }}:62c49e241e17ce004060ea25
-          oas-file-path: ./vcloud.yaml
+          rdme: openapi ./vcloud.yaml --key=${{ secrets.ReadmeIoVociApiKey }} --id=62c49e241e17ce004060ea25
