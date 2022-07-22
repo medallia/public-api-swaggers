@@ -287,28 +287,24 @@ components:
           type: string
           format: uuid
           description:
-            The unique identifier of a specific connection profile.  This value
-            does not typically need to be set.  Please consult with your Medallia
-            Speech specialist to determine if a value is required.  This field
-            was introduced with Medallia Experience Cloud 22CR3.0.
-            
-            Push connector added in 22CR3.0 for "Medallia Speech API Connector".
+            The unique identifier of a specific Speech Connector API as configured
+            in Medallia Admin Suite.  If set, the Speech data in the API request is
+            routed through the Connector for processing, including for extra
+            metadata available in `speech_additional_info`.  This field was
+            introduced with Medallia Experience Cloud 22CR3.0.
         speech_additional_info:
           type: object
           description:
-            # TODO: How are values passed?  What's the key format?
-            # What data types are supported?  How does that work with
-            # things like enums?
-            Additional metadata to add to the Speech record.
-            Mapping is done in MEC in Admin Suite.
-            Only used if a `connector_id` is set.  Requires the MEC Speech Connector in Admin Suite to be setup to understand how parsing should work.
-            Keys are determined by the field values setup in the Connector.
+            Additional metadata to add to the Medallia Speech record.  Mapping this
+            data to the record is performed in setting up the Medallia Speech API
+            Connector in Admin Suite.  Use of this field requires setting a
+            `connector_id`.
           additionalProperties:
-            type: string # TODO
+            $ref: '#/components/schemas/AnyValue'
           example:
             FirstName: "Jo"
             LastName: "Smith"
-            AddressInfo: { "City": "", "State": "", "Country": "" }
+            AddressInfo: { "City": "San Francisco", "State": "CA", "Country": "USA" }
             CallSegmentData: [ 0.3, 5.8, 8.9 ]
             VIP: true
     ProcessingResponse:
@@ -359,6 +355,10 @@ components:
                 type: string
                 description: Details about the processing failure
                 maxLength: 10240
+    AnyValue:
+      nullable: true
+      description:
+        Any valid JSON data type, including `null`.
   securitySchemes:
     mecOauth:
       type: oauth2
