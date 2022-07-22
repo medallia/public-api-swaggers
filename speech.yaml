@@ -190,7 +190,7 @@ components:
             Primary language spoken during the call, specified in a format
             compliant with [IETF BCP 47](https://tools.ietf.org/html/bcp47).
             This value is applied to both the agent and customer channels.
-            This is only used when `engine` is set to "Engine 1".
+            (See `agent_locale` for further details.)
           default: en-US
           maxLength: 10240
         agent_locale:
@@ -255,16 +255,21 @@ components:
             ANI (Automatic Number Identification).
           maxLength: 10240
         connection_id:
+          deprecated: true
           type: string
           description:
-            The unique identifier of a specific connection profile.
+            The unique identifier of a specific connection profile.  This value
+            does not typically need to be set.  Please consult with your Medallia
+            Speech specialist to determine if a value is required.  This field has
+            been deprecated since Medallia Experience Cloud version 22CR3.0, please
+            use `connector_id` instead.
           maxLength: 10240
         profile_uuid:
           deprecated: true
           type: string
           description:
-            This field has been deprecated, please use `connection_id`
-            instead.
+            This field has been deprecated since Medallia Experience Cloud
+            version 21CR3.0, please use `connection_id` instead.
           maxLength: 10240
         engine:
           type: string
@@ -280,11 +285,14 @@ components:
             - "Engine 3"
         connector_id:
           type: string
+          format: uuid
           description:
-            # TODO: What is this?  How does a client know what to put in
-            # this field?
-          example:
-            # TODO
+            The unique identifier of a specific connection profile.  This value
+            does not typically need to be set.  Please consult with your Medallia
+            Speech specialist to determine if a value is required.  This field
+            was introduced with Medallia Experience Cloud 22CR3.0.
+            
+            Push connector added in 22CR3.0 for "Medallia Speech API Connector".
         speech_additional_info:
           type: object
           description:
@@ -292,12 +300,17 @@ components:
             # What data types are supported?  How does that work with
             # things like enums?
             Additional metadata to add to the Speech record.
+            Mapping is done in MEC in Admin Suite.
+            Only used if a `connector_id` is set.  Requires the MEC Speech Connector in Admin Suite to be setup to understand how parsing should work.
+            Keys are determined by the field values setup in the Connector.
           additionalProperties:
-            type:
-              object # TODO
+            type: string # TODO
           example:
-            key1: value1
-            key2: value2
+            FirstName: "Jo"
+            LastName: "Smith"
+            AddressInfo: { "City": "", "State": "", "Country": "" }
+            CallSegmentData: [ 0.3, 5.8, 8.9 ]
+            VIP: true
     ProcessingResponse:
       type: object
       description: Result of a processing request
