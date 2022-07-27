@@ -152,10 +152,11 @@ components:
         unit_identifier:
           type: string
           description:
-            ID of the agent that handled the call (typically the last agent
-            the customer is transferred to if there are multiple agents). This must
-            match the ID that is included in the organizational hierarchy for the
-            agent
+            ID of the agent that handled the call (typically the last agent the
+            customer is transferred to if there are multiple agents). This must
+            match the ID that is included in the organizational hierarchy for
+            the agent.  If no value is provided, either a default unit or "Unit
+            Pending" will be used for the record.
           maxLength: 10240
         call_date_and_time:
           type: string
@@ -187,8 +188,22 @@ components:
           type: string
           description:
             Primary language spoken during the call, specified in a format
-            compliant with [IETF BCP 47](https://tools.ietf.org/html/bcp47)
+            compliant with [IETF BCP 47](https://tools.ietf.org/html/bcp47).
+            This value is applied to both the agent and customer channels.
+            (See `agent_locale` for further details.)  The `engine` selected
+            may or may not leverage this setting during its processing;
+            please check with your Medallia specialist as per the `engine`
+            configuration.
           default: en-US
+          maxLength: 10240
+        agent_locale:
+          type: string
+          description:
+            The language of the agent spoken during the call, specified in a
+            format compliant with [IETF BCP 47](https://tools.ietf.org/html/bcp47).
+            If this is omitted, the `locale` language is used for the agent.  If
+            this is set, the `agent_locale` is used instead.  This is only used
+            when `engine` is set to "Engine 1".
           maxLength: 10240
         apply_diarization:
           type: string
@@ -226,32 +241,75 @@ components:
             - No
         first_name:
           type: string
-          description: The first name of the customer
+          description: The first name of the customer.
           maxLength: 10240
         last_name:
           type: string
-          description: The last name of the customer
+          description: The last name of the customer.
           maxLength: 10240
         email:
           type: string
           format: email
-          description: The email address of the customer
+          description: The email address of the customer.
         phone_number:
           type: string
           description:
             The phone number of the customer, typically from
-            ANI (Automatic Number Identification)
+            ANI (Automatic Number Identification).
           maxLength: 10240
         connection_id:
-          type: string
-          description:  The unique identifier of a specific connection profile
-          maxLength: 10240
-        profile_uuid:
+          deprecated: true
           type: string
           description:
-            The unique identifier (UUID) of the customer profile
-            (will be deprecated soon, use `connection_id` instead)
+            The unique identifier of a specific connection profile.  This value
+            does not typically need to be set.  Please consult with your Medallia
+            Speech specialist to determine if a value is required.  This field has
+            been deprecated since Medallia Experience Cloud version 22CR3.0, please
+            use `connector_id` instead.
           maxLength: 10240
+        profile_uuid:
+          deprecated: true
+          type: string
+          description:
+            This field has been deprecated since Medallia Experience Cloud
+            version 21CR3.0, please use `connection_id` instead.
+          maxLength: 10240
+        engine:
+          type: string
+          description:
+            The Medallia Speech engine to use to perform the
+            transcription processing.  The value to use is determined by
+            your Medallia Speech specialist during the initial audio
+            analysis process while onboarding to Medallia Speech.
+          default: "Engine 1"
+          enum:
+            - "Engine 1"
+            - "Engine 2"
+            - "Engine 3"
+        connector_id:
+          type: string
+          format: uuid
+          description:
+            The unique identifier of a specific Speech Connector API as configured
+            in Medallia Admin Suite.  If set, the Speech data in the API request is
+            routed through the Connector for processing, including for extra
+            metadata available in `speech_additional_info`.  This field was
+            introduced with Medallia Experience Cloud 22CR3.0.
+        speech_additional_info:
+          type: object
+          description:
+            Additional metadata to add to the Medallia Speech record.  Mapping this
+            data to the record is performed in setting up the Medallia Speech API
+            Connector in Admin Suite.  Use of this field requires setting a
+            `connector_id`.
+          additionalProperties:
+            $ref: '#/components/schemas/AnyValue'
+          example:
+            FirstName: "Jo"
+            LastName: "Smith"
+            AddressInfo: { "City": "San Francisco", "State": "CA", "Country": "USA" }
+            CallSegmentData: [ 0.3, 5.8, 8.9 ]
+            VIP: true
     ProcessingResponse:
       type: object
       description: Result of a processing request
@@ -300,6 +358,10 @@ components:
                 type: string
                 description: Details about the processing failure
                 maxLength: 10240
+    AnyValue:
+      nullable: true
+      description:
+        Any valid JSON data type, including `null`.
   securitySchemes:
     mecOauth:
       type: oauth2
