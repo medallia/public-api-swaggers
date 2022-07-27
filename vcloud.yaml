@@ -1,11 +1,334 @@
-openapi: 3.0.0
+openapi: 3.0.1
 info:
   title: V-Cloud API Reference
-  version: 1.0.0
+  description:
+    The V-Cloud API is a collection of web services used to interact with  Voci's
+    Automatic Speech Recognition (ASR) engine. V-Cloud is accessible to any programming
+    language capable of performing HTTP `POST` and `GET` requests. The service is
+    hosted at `https://vcloud.vocitec.com`.
+  version: 1.9.0-2022.06.02
+servers:
+  - url: https://vcloud.vocitec.com/
+tags:
+  - name: Transcribe Request
+    description:
+      The `/transcribe` endpoint accepts `POST` requests containing an audio
+      file, a zip file containing multiple audio files, or an audio file from an external
+      URL. Successful `/transcribe` requests return a `requestid` to retrieve the results.
+      If you specify a callback, results are sent to the specified callback address
+      as soon as the transcription process completes.
+  - name: Results Request
+    description:
+      The `/transcribe/result` endpoint accepts `GET` requests that contain
+      the `requestid` and `token` associated with the results being queried. Successful
+      `/transcribe/result` requests return a URL with the results as a zip or JSON file.
+  - name: Status Request
+    description:
+      The V-Cloud API is primarily used to transcribe audio and get the results,
+      but can also be used to determine if V-Cloud is available by querying the `/status`
+      endpoint.
 paths:
-  /:
-    get:
-      summary: Placeholder
+  /transcribe:
+    post:
+      tags:
+        - Transcribe Request
+      summary: Specify an audio file or URL source to transcribe
+      description:
+        Requests to the `/transcribe` endpoint must include the `file`
+        (or `url` for external audio sources) and `token` parameters. Additional [transcription
+        parameters](https://docs.vocitec.com/en/v-cloud-transcription-parameters.html)
+        are optional.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/transcription-parameters"
+        required: true
       responses:
         200:
-          description: Success
+          $ref: "#/components/responses/requestid-success"
+        400:
+          $ref: "#/components/responses/code-400"
+        401:
+          $ref: "#/components/responses/code-401"
+        405:
+          $ref: "#/components/responses/code-405"
+        500:
+          $ref: "#/components/responses/code-500"
+        502:
+          $ref: "#/components/responses/code-502"
+        504:
+          $ref: "#/components/responses/code-504"
+  /transcribe/result:
+    get:
+      tags:
+        - Results Request
+      summary: Retrieve a secure link to transcription results
+      description:
+        Requests to the `/transcribe/result` endpoint must include a valid
+        `requestid` and `token` as query parameters. The format of your results depends
+        on the options specified in the initial `/transcribe` request.
+      parameters:
+        - $ref: "#/components/parameters/requestid"
+        - $ref: "#/components/parameters/token"
+      responses:
+        200:
+          $ref: "#/components/responses/results-success"
+        202:
+          $ref: "#/components/responses/code-202"
+        401:
+          $ref: "#/components/responses/code-401"
+        405:
+          $ref: "#/components/responses/code-405"
+        422:
+          $ref: "#/components/responses/code-422"
+        500:
+          $ref: "#/components/responses/code-500"
+        503:
+          $ref: "#/components/responses/code-503"
+        504:
+          $ref: "#/components/responses/code-504"
+  /status:
+    get:
+      tags:
+        - Status Request
+      summary: Check V-Cloud availability
+      description:
+        The response indicates the status and availability of V-Cloud.
+        Contact support@vocitec.com if you are experiencing an operational issue.
+      responses:
+        200:
+          description: V-Cloud is available. You do not need to pass a token to make this call.
+          content:
+            text/plain:
+              example: OK
+components:
+  schemas:
+    #-------------------------------
+    # Request body form-data
+    #-------------------------------
+    transcription-parameters:
+      type: object
+      required:
+        - file
+        - token
+      properties:
+        file:
+          type: string
+          description: Specify a single `.wav` audio file or a zip archive
+            containing multiple `.wav` audio files to transcribe. Refer to
+            the `transcode` parameter to use audio formats other than `.wav`.
+          format: binary
+        token:
+          type: string
+          description: Unique string used to authenticate and authorize the
+            request.
+          example: "123e4567e89b12d3a456426655440000"
+        url:
+          type: string
+          description: Use as an alternative to the `file` parameter for sending
+            audio in a request. The provided URL must support HTTP `GET` and
+            return a `Content-Length` header when queried.
+          example: "https://username:password@hostname.com/path/to/sample.wav"
+        callback:
+          type: string
+          description: Provide a callback address for V-Cloud to send the
+            results when the transcription process is complete.
+          example: "https://username:password@hostname.com"
+        diarize:
+          type: boolean
+          description: Use `diarize` to identify distinct speakers on mono
+            (single channel) audio and segment detected speech into separate
+            channels, which are identified in JSON output.
+          default: false
+        emotion:
+          type: boolean
+          description: Emotion detection feature that uses a synthesis of
+            acoustic features and word sentiment scores to determine if a
+            given utterance is Mostly Positive, Positive, Neutral, Negative,
+            or Mostly Negative.
+          default: false
+        gender:
+          type: boolean
+          description: Gender detection feature that attempts to determine
+            if the speaker is male or female in each utterance.
+          default: false
+        metadata:
+          type: string
+          description: Use `metadata` to enable the inclusion of user-defined
+            metadata in a top-level object in JSON transcripts.
+        model:
+          type: string
+          description:
+            Specify the [language model](https://docs.vocitec.com/en/language-support.html)
+            to use for transcription.
+          default: eng-us:callcenter
+        music:
+          type: boolean
+          description: Setting `music` to true enables music detection. When
+            music detection is enabled, all utterances pass through an algorithm
+            to be classified as music or speech. Utterances classified as
+            music are assumed to contain noisy audio and are not transcribed.
+          default: false
+        numtrans:
+          type: boolean
+          description: Controls whether or not number words in transcribed
+            text are converted into numeric digits and related conventional
+            formats, including dollar amounts, wall-clock times, percentages,
+            ordinals, and telephone numbers.
+          default: true
+        output:
+          type: string
+          description: Specify the desired output format for transcripts.
+          default: json
+          enum:
+            - json
+            - jsontop
+            - text
+        outzip:
+          type: boolean
+          description: Specifies whether or not to contain the results in
+            a zip file.
+          default: false
+        punctuate:
+          type: boolean
+          description: Controls whether transcript text is punctuated or not.
+            In most cases, it is desirable to leave punctuation turned on.
+          default: true
+        scrubaudio:
+          type: boolean
+          description: Setting `scrubaudio` to true enables redacted audio.
+            When this option is enabled, a zip file containing the redacted
+            audio returns with the transcript.
+          default: false
+        scrubtext:
+          type: boolean
+          description: Setting `scrubtext` to true enables the redaction feature
+            for transcript text. Redaction recognizes and removes sensitive
+            numeric values from results.
+          default: false
+        scrubconf:
+          type: string
+          description: Define custom redaction rules as the value of `scrubconf`
+            in a V-Cloud API request. Default redaction rules are already
+            available when setting `scrubtext` to true. Review [Default Redaction
+            File](https://docs.vocitec.com/en/default-redaction-file---scrub-conf.html)
+            for best practices when creating redaction rules.
+        subst:
+          type: boolean
+          description: The `subst` parameter can be used to enable or disable
+            automatic system- and model-level substitutions.
+          default: false
+        substinfo:
+          type: boolean
+          description: Provides substitution details in JSON transcripts.
+          default: false
+        subst_rules:
+          type: string
+          description: Specify a newline-delimited string that contains substitution rules to apply during transcription.
+          example: "before : after\nbad this : bad fish\npc and number : PCN number"
+        transcode:
+          type: boolean
+          description: Use to convert incoming audio into a supported format.
+            `transcode` supports an extensive set of open audio formats. Submit
+            the audio in a request to determine if the audio format is supported.
+          default: false
+  parameters:
+    #-------------------------------
+    # Query parameters
+    #-------------------------------
+    requestid:
+      name: requestid
+      in: query
+      description:
+        Valid requestid returned by a successful POST to the `/transcribe`
+        endpoint.
+      required: true
+      schema:
+        type: string
+        example: "700e7496-4fce-4963-aa7b-b3b26600f813"
+    token:
+      name: token
+      in: query
+      description: Valid authorization token.
+      required: true
+      schema:
+        type: string
+        example: "123e4567e89b12d3a456426655440000"
+  responses:
+    #-------------------------------
+    # Unique responses
+    #-------------------------------
+    requestid-success:
+      description: The transcription request to V-Cloud was successful and
+        returned a `requestid` to retrieve the results.
+      content:
+        application/json:
+          example:
+            requestid: 700e7496-4fce-4963-aa7b-b3b26600f813.
+    results-success:
+      description:
+        The request to V-Cloud was successful and a link to the results
+        was returned.
+      content:
+        application/json:
+          example: https://vcloud-download.s3.amazonaws.com/a7406862-9811-4c81-a896-81abd4705a4f-zip?X-Amz-Security-Token=FQ...3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20180130T193649Z&X-Amz-SignedHeaders=host&X-Amz-Expires=3600&X-Amz-Credential=ASIAIDW6XGGVYD5XLVFA%2F20180130%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=0a2562c15863a909490e44f7968a281489bb5b5b294c5bd93d1ad5701e0fd68a
+    #-------------------------------
+    # Reusable responses
+    #-------------------------------
+    code-202:
+      description: The results requested from `/transcribe/result` are not yet
+        available. Wait a few moments and retry the request.
+      content:
+        text/plain:
+          example: Accepted
+    code-400:
+      description: The attempted request contains an invalid argument. Review
+        the request for errors and try again.
+      content:
+        text/plain:
+          example: Required request part 'file' is not present
+    code-401:
+      description: The request used an invalid token.
+      content:
+        text/plain:
+          example: Invalid token
+    code-405:
+      description: The request used an invalid method. `POST` is the only valid
+        request method to the `/transcribe` endpoint. `GET` is the only valid
+        request method to the `/transcribe/result` endpoint.
+      content:
+        text/plain:
+          example: Method Not Allowed
+    code-422:
+      description: The results requested from `/transcribe/result` do not exist
+        because the initial `/transcribe` request data was invalid and could not
+        be processed.
+      content:
+        text/plain:
+          example: Unprocessable Entity
+    code-500:
+      description: Indicates an internal issue with the V-Cloud server. Retry
+        the request and contact support@vocitec.com if the issue persists.
+      content:
+        text/plain:
+          example: Internal Server Error
+    code-502:
+      description: A required service for the request was inaccessible. If the
+        request includes a url audio source, there may be an issue with the connection
+        to the remote file provider.
+      content:
+        text/plain:
+          example: Bad Gateway
+    code-503:
+      description: V-Cloud is temporarily unavailable. The issue might be caused
+        by too many active connections or an unavailable internal service.
+      content:
+        text/plain:
+          example: Service Unavailable
+    code-504:
+      description: The request was unable to complete within a reasonable amount
+        of time. Retry the request.
+      content:
+        text/plain:
+          example: Gateway Timeout
