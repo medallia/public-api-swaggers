@@ -190,7 +190,10 @@ components:
             Primary language spoken during the call, specified in a format
             compliant with [IETF BCP 47](https://tools.ietf.org/html/bcp47).
             This value is applied to both the agent and customer channels.
-            (See `agent_locale` for further details.)
+            (See `agent_locale` for further details.)  The `engine` selected
+            may or may not leverage this setting during its processing;
+            please check with your Medallia specialist as per the `engine`
+            configuration.
           default: en-US
           maxLength: 10240
         agent_locale:
