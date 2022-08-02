@@ -130,7 +130,7 @@ paths:
     servers:
       - url: 'https://{conversations-api-gateway-hostname}'
         variables:
-          api-gateway-hostname:
+          conversations-api-gateway-hostname:
             default: conversations.sc4.medallia.com
             description:
               The Medallia Experience Cloud hostname used to access
@@ -269,7 +269,7 @@ paths:
     servers:
       - url: 'https://{conversations-api-gateway-hostname}'
         variables:
-          api-gateway-hostname:
+          conversations-api-gateway-hostname:
             default: conversations.sc4.medallia.com
             description:
               The Medallia Experience Cloud hostname used to access
