@@ -1,11 +1,387 @@
 openapi: 3.0.0
 info:
   title: V-Cloud API Reference
-  version: 1.0.0
+  description:
+    The V-Cloud API is a collection of web services used to interact with Voci's
+    Automatic Speech Recognition (ASR) engine. V-Cloud is accessible to any programming
+    language capable of performing HTTP `POST` and `GET` requests. The service is
+    hosted at `https://vcloud.vocitec.com`.
+  version: 1.9.0-2022.06.02
+servers:
+  - url: https://vcloud.vocitec.com
+tags:
+  - name: Transcribe Request
+    description:
+      The `/transcribe` endpoint accepts `POST` requests containing an audio
+      file, a ZIP file containing multiple audio files, or a URL pointing to 
+      an audio file from which V-Cloud will download the audio data.
+  - name: Results Request
+    description:
+      The `/transcribe/result` endpoint accepts `GET` requests that contain
+      the `requestid` and `token` associated with the results being queried. 
+  - name: Status Request
+    description:
+      The `/status` endpoint accepts `GET` requests and returns the status if 
+      V-Cloud is operational.
 paths:
-  /:
-    get:
-      summary: Placeholder
+  /transcribe:
+    post:
+      tags:
+        - Transcribe Request
+      summary: Specify one or more audio files or a URL source to transcribe
+      description: 
+        Customize transcription output as needed with request parameters. 
+        To receive transcription results, include a callback URL with your 
+        request or access them using the 
+        <a href="#tag/Results-Request" target="_self"><code>/transcribe/result</code></a> 
+        endpoint.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/transcription-parameters"
+        required: true
       responses:
         200:
-          description: Success
+          $ref: "#/components/responses/requestid-success"
+        400:
+          $ref: "#/components/responses/code-400"
+        401:
+          $ref: "#/components/responses/code-401"
+        405:
+          $ref: "#/components/responses/code-405"
+        500:
+          $ref: "#/components/responses/code-500"
+        502:
+          $ref: "#/components/responses/code-502"
+        504:
+          $ref: "#/components/responses/code-504"
+  /transcribe/result:
+    get:
+      tags:
+        - Results Request
+      summary: Retrieve a secure link to transcription results
+      description:
+        Retrieve transcription results using a valid `requestid` and `token`.
+        The format of your results depend on the options specified in the 
+        initial `/transcribe` request. Generally, `/transcribe` request 
+        options that produce more than one file contain the results in 
+        a ZIP file.
+      parameters:
+        - $ref: "#/components/parameters/requestid"
+        - $ref: "#/components/parameters/token"
+      responses:
+        200:
+          $ref: "#/components/responses/results-success"
+        202:
+          $ref: "#/components/responses/code-202"
+        401:
+          $ref: "#/components/responses/code-401"
+        405:
+          $ref: "#/components/responses/code-405"
+        422:
+          $ref: "#/components/responses/code-422"
+        500:
+          $ref: "#/components/responses/code-500"
+        503:
+          $ref: "#/components/responses/code-503"
+        504:
+          $ref: "#/components/responses/code-504"
+  /status:
+    get:
+      tags:
+        - Status Request
+      summary: Check V-Cloud availability
+      description:
+        The response indicates the status and availability of V-Cloud.
+        Contact [Voci support](mailto:support@vocitec.com) if you are 
+        experiencing an operational issue.
+      responses:
+        200:
+          description: 
+            V-Cloud is available.
+          content:
+            text/plain:
+              example: OK
+components:
+  schemas:
+    #-------------------------------
+    # Request body form-data
+    #-------------------------------
+    transcription-parameters:
+      type: object
+      required:
+        - file
+        - token
+      properties:
+        file:
+          type: string
+          description:
+            Specify a single `.wav` audio file or a ZIP archive containing
+            multiple `.wav` audio files to transcribe.
+            Refer to the `transcode` parameter to use audio formats other
+            than `.wav`.
+          format: binary
+        token:
+          type: string
+          description: 
+            Unique string used to authenticate and authorize the
+            request. All requests made with a token are linked to 
+            the associated account. 
+            Contact [Voci support](mailto:support@vocitec.com) if you 
+            haven't received a token or if a token is lost or comprimised. 
+          example: "123e4567e89b12d3a456426655440000"
+        url:
+          type: string
+          description: 
+            Use as an alternative to the `file` parameter for sending
+            audio in a request. The provided URL must support HTTP `GET` and
+            return a `Content-Length` header when queried. `url` supports HTTP
+            basic authentication by prepending access credentials to the
+            hostname of the URL as shown in the example. In addition, `url` 
+            also supports HTTP authorization request headers by including 
+            the authorization header, authorization type, and access credentials 
+            in the request.
+          example: 'https://username:password@hostname:port/path/sample.wav'
+        callback:
+          type: string
+          description:
+            Provide a callback address for V-Cloud to send the results when
+            the transcription process is complete. `callback` supports HTTP
+            basic authentication by prepending access credentials to the
+            hostname of the URL as shown in the example.
+          example: 'https://username:password@hostname:port'
+        diarize:
+          type: boolean
+          description: 
+            Enable to identify distinct speakers on mono (single channel) 
+            audio and segment detected speech into separate channels, which are 
+            identified in JSON output.
+          default: false
+        emotion:
+          type: boolean
+          description: 
+            Enables the emotion detection feature that uses a synthesis of 
+            acoustic features and word sentiment scores to determine if a 
+            given utterance is Mostly Positive, Positive, Neutral, Negative, 
+            or Mostly Negative.
+          default: false
+        gender:
+          type: boolean
+          description: 
+            Enables the gender detection feature that attempts to determine 
+            if the speaker is male or female in each utterance.
+          default: false
+        metadata:
+          type: string
+          description: 
+            Enables the inclusion of user-defined metadata in a top-level object 
+            of JSON transcripts.
+          example: 'metadata: "sample metadata string"'
+        model:
+          type: string
+          description:
+            Specify the [language model](https://docs.vocitec.com/en/language-support.html)
+            to use for transcription.
+          default: eng-us:callcenter
+        music:
+          type: boolean
+          description: 
+            Enables the music detection feature to pass all utterances through 
+            an algorithm to be classified as music or speech. Utterances classified 
+            as music are assumed to contain noisy audio and are not transcribed.
+          default: false
+        numtrans:
+          type: boolean
+          description: 
+            Enables the number translation feature to control whether or not 
+            number words in transcribed text are converted into numeric digits 
+            and related conventional formats, including dollar amounts, 
+            wall-clock times, percentages, ordinals, and telephone numbers.
+          default: true
+        output:
+          type: string
+          description: 
+            Specify the desired output format for transcripts. 
+            Refer to [output](https://docs.vocitec.com/en/output-72701.html) 
+            for more information on output formats.
+          default: json
+          enum:
+            - json
+            - jsontop
+            - text
+        outzip:
+          type: boolean
+          description: 
+            Enable to contain the results in a ZIP file.
+          default: false
+        punctuate:
+          type: boolean
+          description: 
+            Enables the punctuation feature to control whether transcript text 
+            is punctuated or not. In most cases, it is desirable to leave 
+            punctuation turned on.
+          default: true
+        scrubaudio:
+          type: boolean
+          description: 
+            Enables the [redaction](https://docs.vocitec.com/en/redaction-overview.html) 
+            feature to redact audio. Redaction recognizes and removes sensitive
+            numeric values from results. When this option is enabled, a ZIP file 
+            containing the redacted audio returns with the transcript.
+          default: false
+        scrubtext:
+          type: boolean
+          description: 
+            Enables the [redaction](https://docs.vocitec.com/en/redaction-overview.html) 
+            feature to redact transcript text. Redaction recognizes and removes sensitive
+            numeric values from results.
+          default: false
+        scrubconf:
+          type: string
+          description: 
+            Define custom redaction rules using regular expression matches contained 
+            in a JSON object. Default redaction rules are already available when 
+            setting `scrubtext` to true. 
+            Refer to [Redaction Rule Syntax](https://docs.vocitec.com/en/redaction-rule-syntax.html) 
+            for the correct syntax 
+            and [Default Redaction File](https://docs.vocitec.com/en/default-redaction-file---scrub-conf.html)
+            for best practices when developing redaction rules.
+          example: '[{"regex":"resolved","repl":"SCRUBBED"}]'
+        subst:
+          type: boolean
+          description: 
+            Enables automatic system and model-level substitutions.
+          default: false
+        substinfo:
+          type: boolean
+          description: 
+            Enable to provide substitution details in JSON transcripts.
+          default: false
+        subst_rules:
+          type: string
+          description: 
+            Specify a newline-delimited string that contains substitution rules to 
+            apply during transcription.
+          example: "before : after\nbad this : bad fish\npc and number : PCN number"
+        transcode:
+          type: boolean
+          description: 
+            Enable to convert incoming audio into a supported format. `transcode` 
+            supports an extensive set of open audio formats. As our support for 
+            different formats changes frequently, submit your audio in a request 
+            to determine if the audio format is supported.
+          default: false
+  parameters:
+    #-------------------------------
+    # Query parameters
+    #-------------------------------
+    requestid:
+      name: requestid
+      in: query
+      description:
+        Valid requestid returned by the `/transcribe` endpoint
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: '700e7496-4fce-4963-aa7b-b3b26600f813'
+    token:
+      name: token
+      in: query
+      description: 
+        Valid authorization token
+      required: true
+      schema:
+        type: string
+        example: "123e4567e89b12d3a456426655440000"
+  responses:
+    #-------------------------------
+    # Unique responses
+    #-------------------------------
+    requestid-success:
+      description: 
+        The transcription request was successful and
+        returned a `requestid` to retrieve the results.
+      content:
+        application/json:
+          example:
+            requestid: 700e7496-4fce-4963-aa7b-b3b26600f813
+    results-success:
+      description:
+        The request was successful and a secure link to the results
+        was returned.
+      content:
+        application/json:
+          example: https://vcloud-download.s3.amazonaws.com/a7406862-9811-4c81-a896-81abd4705a4f-zip?X-Amz-Security-Token=FQ...3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20180130T193649Z&X-Amz-SignedHeaders=host&X-Amz-Expires=3600&X-Amz-Credential=ASIAIDW6XGGVYD5XLVFA%2F20180130%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=0a2562c15863a909490e44f7968a281489bb5b5b294c5bd93d1ad5701e0fd68a
+    #-------------------------------
+    # Reusable responses
+    #-------------------------------
+    code-202:
+      description: 
+        The requested results are not available yet. 
+        Wait a few moments and retry the request.
+      content:
+        text/plain:
+          example: Accepted
+    code-400:
+      description: 
+        The attempted request contains an invalid argument. Review
+        the request for errors and try again.
+      content:
+        text/plain:
+          example: Required request part 'file' is not present
+    code-401:
+      description: 
+        The request used an invalid token.
+      content:
+        text/plain:
+          example: Invalid token
+    code-405:
+      description: 
+        The request used an invalid method.
+      content:
+        text/plain:
+          example: Method Not Allowed
+    code-422:
+      description: 
+        The results requested do not exist because the initial `/transcribe` 
+        request data was invalid and could not be processed.
+      content:
+        text/plain:
+          example: Unprocessable Entity
+    code-500:
+      description: 
+        Indicates an internal issue with the V-Cloud server. 
+        Retry the request. If the issue persists, 
+        contact [Voci support](mailto:support@vocitec.com) or 
+        check [Voci Status](https://status.vocitec.com).
+      content:
+        text/plain:
+          example: Internal Server Error
+    code-502:
+      description: 
+        A required service for the request was inaccessible. If the
+        request includes a URL audio source, there may be an issue 
+        with the connection to the remote file provider.
+      content:
+        text/plain:
+          example: Bad Gateway
+    code-503:
+      description: 
+        V-Cloud is temporarily unavailable. The issue might be caused
+        by too many active connections or an unavailable internal service. 
+        If the issue persists, contact [Voci support](mailto:support@vocitec.com) or 
+        check [Voci Status](https://status.vocitec.com).
+      content:
+        text/plain:
+          example: Service Unavailable
+    code-504:
+      description: 
+        The request was unable to complete within a reasonable amount of time. 
+        Retry the request. 
+        If the issue persists, contact [Voci support](mailto:support@vocitec.com) or 
+        check [Voci Status](https://status.vocitec.com).
+      content:
+        text/plain:
+          example: Gateway Timeout
