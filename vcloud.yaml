@@ -28,13 +28,11 @@ paths:
     post:
       tags:
         - Transcribe Request
-      summary: Specify one or more audio files or a URL source to transcribe
+      summary: Send a transcription request
       description: 
         Customize transcription output as needed with request parameters. 
         To receive transcription results, include a callback URL with your 
-        request or access them using the 
-        <a href="#tag/Results-Request" target="_self"><code>/transcribe/result</code></a> 
-        endpoint.
+        request or access them using the `/transcribe/result` endpoint.
       requestBody:
         content:
           multipart/form-data:
@@ -170,7 +168,8 @@ components:
           type: boolean
           description: 
             Enables the gender detection feature that attempts to determine 
-            if the speaker is male or female in each utterance.
+            if the speaker is "male" (stereotypically lower frequencies) or 
+            "female" (stereotypically higher frequencies) in each utterance.
           default: false
         metadata:
           type: string
