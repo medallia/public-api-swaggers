@@ -10,7 +10,7 @@ servers:
   - url: 'https://{api-gateway-hostname}'
     variables:
       api-gateway-hostname:
-        default: instance.apis.medallia.com
+        default: instance-tenant.apis.medallia.com
         description:
           The Medallia Experience Cloud hostname used to access
           Medallia Reporting
