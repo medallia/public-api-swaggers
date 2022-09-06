@@ -165,25 +165,25 @@ paths:
 components:
   headers:
     X-RateLimit-Limit-day:
-      description: The number of requests allowed in total in a 24-hour period
+      description: The number of requests allowed in total in a 24-hour period. Deprecated as of Sept. 2022.
       schema:
         type: integer
       example: 10000
       deprecated: true
     X-RateLimit-Remaining-day:
-      description: The number of requests available to make in a 24-hour period
+      description: The number of requests available to make in a 24-hour period. Deprecated as of Sept. 2022.
       schema:
         type: integer
       example: 10000
       deprecated: true
     X-RateLimit-Limit-second:
-      description: The number of requests allowed in total in a 1-second period
+      description: The number of requests allowed in total in a 1-second period. Deprecated as of Sept. 2022.
       schema:
         type: integer
       example: 10
       deprecated: true
     X-RateLimit-Remaining-second:
-      description: The number of requests available to make in a 1-second period
+      description: The number of requests available to make in a 1-second period. Deprecated as of Sept. 2022.
       schema:
         type: integer
       example: 10
