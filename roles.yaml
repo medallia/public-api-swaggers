@@ -58,6 +58,12 @@ paths:
               $ref: '#/components/headers/X-RateLimit-Limit-second'
             X-RateLimit-Remaining-second:
               $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
             X-Medallia-Rpc-Request-Id:
               $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
           content:
@@ -79,6 +85,12 @@ paths:
               $ref: '#/components/headers/X-RateLimit-Limit-second'
             X-RateLimit-Remaining-second:
               $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
             X-Medallia-Rpc-Request-Id:
               $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
         412:
@@ -113,6 +125,12 @@ paths:
               $ref: '#/components/headers/X-RateLimit-Limit-second'
             X-RateLimit-Remaining-second:
               $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
             X-Medallia-Rpc-Request-Id:
               $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
           content:
@@ -134,6 +152,12 @@ paths:
               $ref: '#/components/headers/X-RateLimit-Limit-second'
             X-RateLimit-Remaining-second:
               $ref: '#/components/headers/X-RateLimit-Remaining-second'
+             X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
             X-Medallia-Rpc-Request-Id:
               $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
         412:
