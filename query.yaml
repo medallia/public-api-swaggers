@@ -49,6 +49,12 @@ paths:
               $ref: '#/components/headers/X-RateLimit-Limit-second'
             X-RateLimit-Remaining-second:
               $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
             X-Medallia-Rpc-Request-Id:
               $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
           content:
@@ -80,6 +86,12 @@ paths:
               $ref: '#/components/headers/X-RateLimit-Limit-second'
             X-RateLimit-Remaining-second:
               $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
             X-Medallia-Rpc-Request-Id:
               $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
         412:
@@ -91,22 +103,42 @@ paths:
 components:
   headers:
     X-RateLimit-Limit-day:
-      description: The number of requests allowed in total in a 24-hour period
+      description: The number of requests allowed in total in a 24-hour period. Deprecated as of Sept. 2022 in favor of X-RateLimit-Limit.
       schema:
         type: integer
       example: 10000
+      deprecated: true
     X-RateLimit-Remaining-day:
-      description: The number of requests available to make in a 24-hour period
+      description: The number of requests available to make in a 24-hour period. Deprecated as of Sept. 2022 in favor of X-RateLimit-Remaining.
       schema:
         type: integer
       example: 10000
+      deprecated: true
     X-RateLimit-Limit-second:
-      description: The number of requests allowed in total in a 1-second period
+      description: The number of requests allowed in total in a 1-second period. Deprecated as of Sept. 2022 in favor of X-RateLimit-Limit.
       schema:
         type: integer
       example: 10
+      deprecated: true
     X-RateLimit-Remaining-second:
-      description: The number of requests available to make in a 1-second period
+      description: The number of requests available to make in a 1-second period. Deprecated as of Sept. 2022 in favor of X-RateLimit-Remaining.
+      schema:
+        type: integer
+      example: 10
+      deprecated: true
+    X-RateLimit-Limit:
+      description: Indicates the request quota closest to reaching its limit amongst all available quotas. Follows the semantics of
+  [IETF draft-polli-ratelimit-headers](https://datatracker.ietf.org/doc/html/draft-polli-ratelimit-headers).
+        type: string
+      example: 10, 10;w=1, 100;w=86400
+    X-RateLimit-Remaining:
+      description: Indicates the number of requests remaining in the quota that is closest to expiring (as indicated by `X-RateLimit-Limit`). Follows the semantics of
+  [IETF draft-polli-ratelimit-headers](https://datatracker.ietf.org/doc/html/draft-polli-ratelimit-headers).
+      schema:
+        type: integer
+      example: 10
+    X-RateLimit-Reset:
+      description: Indicates the number of seconds remaining until the quota resets.  Follows the semantics of [IETF draft-polli-ratelimit-headers](https://datatracker.ietf.org/doc/html/draft-polli-ratelimit-headers).
       schema:
         type: integer
       example: 10
