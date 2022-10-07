@@ -193,18 +193,27 @@ components:
       example: 10
       deprecated: true
     X-RateLimit-Limit:
-      description: Indicates the request quota closest to reaching its limit amongst all available quotas. Follows the semantics of
-  [IETF draft-polli-ratelimit-headers](https://datatracker.ietf.org/doc/html/draft-polli-ratelimit-headers).
+      description:
+        Indicates the request quota closest to reaching its limit
+        amongst all available quotas. Follows the semantics of
+        [IETF draft-polli-ratelimit-headers](https://datatracker.ietf.org/doc/html/draft-polli-ratelimit-headers).
+      schema:
         type: string
       example: 10, 10;w=1, 100;w=86400
     X-RateLimit-Remaining:
-      description: Indicates the number of requests remaining in the quota that is closest to expiring (as indicated by `X-RateLimit-Limit`). Follows the semantics of
-  [IETF draft-polli-ratelimit-headers](https://datatracker.ietf.org/doc/html/draft-polli-ratelimit-headers).
+      description:
+        Indicates the number of requests remaining in the quota that is
+        closest to expiring (as indicated by `X-RateLimit-Limit`).
+        Follows the semantics of
+        [IETF draft-polli-ratelimit-headers](https://datatracker.ietf.org/doc/html/draft-polli-ratelimit-headers).
       schema:
         type: integer
       example: 10
     X-RateLimit-Reset:
-      description: Indicates the number of seconds remaining until the quota resets.  Follows the semantics of [IETF draft-polli-ratelimit-headers](https://datatracker.ietf.org/doc/html/draft-polli-ratelimit-headers).
+      description:
+        Indicates the number of seconds remaining until the quota
+        resets.  Follows the semantics of
+        [IETF draft-polli-ratelimit-headers](https://datatracker.ietf.org/doc/html/draft-polli-ratelimit-headers).
       schema:
         type: integer
       example: 10
