@@ -314,10 +314,150 @@ components:
       content:
         application/json:
           example: 
-            $ref: "#/components/examples/transcript-json"
+            asr: 7.4.0-2
+            confidence: 0.86
+            donedate: '2022-10-06 12:58:44.122955'
+            audiosecs: 67.02
+            utterances:
+              - donedate: '2022-10-06 12:58:44.043350'
+                recvtz:
+                  - EDT
+                  - -14400
+                confidence: 0.9
+                end: 7.79
+                start: 0.08
+                recvdate: '2022-10-06 12:58:42.495624'
+                events:
+                  - confidence: 0.68
+                    end: 0.41
+                    start: 0.08
+                    word: Thank
+                  - confidence: 0.98
+                    end: 0.59
+                    start: 0.41
+                    word: you
+                  - confidence: 0.95
+                    end: 0.8
+                    start: 0.59
+                    wordex: for(4)
+                    word: for
+                  - confidence: 1
+                    end: 1.19
+                    start: 0.8
+                    word: calling
+                  - confidence: 0.83
+                    end: 1.49
+                    start: 1.19
+                    word: orion
+                  - confidence: 0.86
+                    end: 1.76
+                    start: 1.49
+                    word: utilities
+                  - confidence: 0.87
+                    end: 2.81
+                    start: 2.36
+                    word: technical
+                  - confidence: 0.97
+                    end: 3.29
+                    start: 2.81
+                    word: support.
+                  - confidence: 0.88
+                    end: 4.13
+                    start: 3.95
+                    word: I
+                  - confidence: 0.91
+                    end: 4.67
+                    start: 4.13
+                    word: understand
+                  - confidence: 0.98
+                    end: 4.76
+                    start: 4.67
+                    word: you
+                  - confidence: 0.98
+                    end: 4.94
+                    start: 4.76
+                    word: need
+                  - confidence: 0.83
+                    end: 5.03
+                    start: 4.94
+                    wordex: to(3)
+                    word: to
+                  - confidence: 0.82
+                    end: 5.42
+                    start: 5.03
+                    wordex: report(2)
+                    word: report
+                  - confidence: 0.93
+                    end: 5.54
+                    start: 5.42
+                    wordex: a(2)
+                    word: a
+                  - confidence: 0.76
+                    end: 5.9
+                    start: 5.57
+                    word: gas
+                  - confidence: 0.95
+                    end: 6.23
+                    start: 5.9
+                    word: leak
+                  - confidence: 0.94
+                    end: 6.77
+                    start: 6.56
+                    word: can
+                  - confidence: 0.99
+                    end: 6.83
+                    start: 6.77
+                    word: I
+                  - confidence: 0.94
+                    end: 7.01
+                    start: 6.83
+                    word: have
+                  - confidence: 0.66
+                    end: 7.13
+                    start: 7.01
+                    wordex: your(2)
+                    word: your
+                  - confidence: 0.99
+                    end: 7.4
+                    start: 7.13
+                    word: name
+                  - confidence: 0.98
+                    end: 7.79
+                    start: 7.4
+                    word: please.
+                metadata:
+                  source: sample7.wav
+                  model: eng-us:callcenter
+                  uttid: 0
+                  channel: 0
+            nchannels: 1
+            started: '2022-10-06 12:58:42.479704'
+            streamtags:
+              punctuate: true
+              numtrans: true
+              model: eng-us:callcenter
+              scrubaudio: false
+            ended: '2022-10-06 12:58:44.125085'
+            recvtz:
+              - EDT
+              - -14400
+            requestid: 700e7496-4fce-4963-aa7b-b3b26600f813
+            textinfo:
+              wordtime:
+                - 43.56
+                - 0.65
+              words: 132
+              silence:
+                - 23.46
+                - 0.35
+            model: eng-us:callcenter
+            recvdate: '2022-10-06 12:58:42.495624'
+            source: sample7.wav
         text/plain:
           example:
-            $ref: "#/components/examples/transcript-text"
+            Thank you for calling orion utilities technical support.  I
+            understand you need to report a gas leak can I have your name
+            please.
     #-------------------------------
     # Reusable responses
     #-------------------------------
@@ -392,151 +532,3 @@ components:
       content:
         text/plain:
           example: Gateway Timeout
-  #-------------------------------
-  # Transcript samples
-  #-------------------------------
-  examples:
-    transcript-text:
-      Thank you for calling orion utilities technical support. 
-      I understand you need to report a gas leak can I have your name please.
-    transcript-json:
-      asr: 7.4.0-2
-      confidence: 0.86
-      donedate: '2022-10-06 12:58:44.122955'
-      audiosecs: 67.02
-      utterances:
-        - donedate: '2022-10-06 12:58:44.043350'
-          recvtz:
-            - EDT
-            - -14400
-          confidence: 0.9
-          end: 7.79
-          start: 0.08
-          recvdate: '2022-10-06 12:58:42.495624'
-          events:
-            - confidence: 0.68
-              end: 0.41
-              start: 0.08
-              word: Thank
-            - confidence: 0.98
-              end: 0.59
-              start: 0.41
-              word: you
-            - confidence: 0.95
-              end: 0.8
-              start: 0.59
-              wordex: for(4)
-              word: for
-            - confidence: 1
-              end: 1.19
-              start: 0.8
-              word: calling
-            - confidence: 0.83
-              end: 1.49
-              start: 1.19
-              word: orion
-            - confidence: 0.86
-              end: 1.76
-              start: 1.49
-              word: utilities
-            - confidence: 0.87
-              end: 2.81
-              start: 2.36
-              word: technical
-            - confidence: 0.97
-              end: 3.29
-              start: 2.81
-              word: support.
-            - confidence: 0.88
-              end: 4.13
-              start: 3.95
-              word: I
-            - confidence: 0.91
-              end: 4.67
-              start: 4.13
-              word: understand
-            - confidence: 0.98
-              end: 4.76
-              start: 4.67
-              word: you
-            - confidence: 0.98
-              end: 4.94
-              start: 4.76
-              word: need
-            - confidence: 0.83
-              end: 5.03
-              start: 4.94
-              wordex: to(3)
-              word: to
-            - confidence: 0.82
-              end: 5.42
-              start: 5.03
-              wordex: report(2)
-              word: report
-            - confidence: 0.93
-              end: 5.54
-              start: 5.42
-              wordex: a(2)
-              word: a
-            - confidence: 0.76
-              end: 5.9
-              start: 5.57
-              word: gas
-            - confidence: 0.95
-              end: 6.23
-              start: 5.9
-              word: leak
-            - confidence: 0.94
-              end: 6.77
-              start: 6.56
-              word: can
-            - confidence: 0.99
-              end: 6.83
-              start: 6.77
-              word: I
-            - confidence: 0.94
-              end: 7.01
-              start: 6.83
-              word: have
-            - confidence: 0.66
-              end: 7.13
-              start: 7.01
-              wordex: your(2)
-              word: your
-            - confidence: 0.99
-              end: 7.4
-              start: 7.13
-              word: name
-            - confidence: 0.98
-              end: 7.79
-              start: 7.4
-              word: please.
-          metadata:
-            source: sample7.wav
-            model: eng-us:callcenter
-            uttid: 0
-            channel: 0
-      nchannels: 1
-      started: '2022-10-06 12:58:42.479704'
-      streamtags:
-        punctuate: true
-        numtrans: true
-        model: eng-us:callcenter
-        scrubaudio: false
-      ended: '2022-10-06 12:58:44.125085'
-      recvtz:
-        - EDT
-        - -14400
-      requestid: 700e7496-4fce-4963-aa7b-b3b26600f813
-      textinfo:
-        wordtime:
-          - 43.56
-          - 0.65
-        words: 132
-        silence:
-          - 23.46
-          - 0.35
-      model: eng-us:callcenter
-      recvdate: '2022-10-06 12:58:42.495624'
-      source: sample7.wav
-
