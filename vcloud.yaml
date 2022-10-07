@@ -397,7 +397,7 @@ components:
   #-------------------------------
   examples:
     transcript-text:
-      Thank you for calling center point energy technical support. 
+      Thank you for calling orion utilities technical support. 
       I understand you need to report a gas leak can I have your name please.
     transcript-json:
       asr: 7.4.0-2
@@ -434,15 +434,11 @@ components:
             - confidence: 0.83
               end: 1.49
               start: 1.19
-              word: center
+              word: orion
             - confidence: 0.86
               end: 1.76
               start: 1.49
-              word: point
-            - confidence: 0.96
-              end: 2.3
-              start: 1.79
-              word: energy
+              word: utilities
             - confidence: 0.87
               end: 2.81
               start: 2.36
