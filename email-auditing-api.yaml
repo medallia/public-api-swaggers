@@ -1,0 +1,253 @@
+openapi: 3.0.1
+info:
+  description: |
+        Email Auditing API allows for downloading Invitation, Reminder, and/or Feedback (Rapid) response emails in a compressed file for specific Experience programs and Ad Hoc surveys within a defined period of time. By retaining the last version of these emails for up to 30 days, companies can manage their communication policies and comply with standard industry regulations.
+  title: Email Auditing API
+  version: 0.0.2
+servers:
+  - url: https://{api-gateway-hostname}
+    variables:
+      api-gateway-hostname:
+        default: instance-tenant.apis.medallia.com
+        description:
+          The Medallia Experience Cloud hostname used to access Medallia Audit Email API
+paths:
+  /audit-email/v0/emails/tarfile:
+    get:
+      description: |
+        Downloads Invitation, Reminder, and/or Feedback (Rapid) response emails in a compressed (.tar.gz) file within a set period of time.
+      operationId: downloadTar
+      parameters:
+        - description:
+            The oldest timestamp from which emails are downloaded. Timestamp is in second granularity and is inclusive (for example, 12:00:01 includes the first second of the minute). Timestamp must be in YYYY-MM-DDTHH:mm:ssZ format (ISO 8601).
+          in: query
+          name: since
+          required: true
+          schema:
+            format: date-time
+            type: string
+        - description:
+            The most recent timestamp from which emails are downloaded. Timestamp is exclusive (for example, 12:00:01 excludes the first second of the minute). Timestamp must be in YYYY-MM-DDTHH:mm:ssZ format (ISO 8601).
+          in: query
+          name: until
+          required: true
+          schema:
+            format: date-time
+            type: string
+        - description: List of the Experience programs or Ad Hoc surveys IDs (separated by comma) emails are part of.
+          in: query
+          name: program_ids
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/octet-stream:
+              schema:
+                format: binary
+                type: string
+          description: A compressed file (.tar.gz) with the emails to audit within the defined period of time (Since - Until).
+        "401":
+          content:
+            application/octet-stream:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Unauthorized.
+        "403":
+          content:
+            application/octet-stream:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Forbidden.
+        "500":
+          content:
+            application/octet-stream:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Internal server error.
+  /audit-email/v0/programs:
+    get:
+      description: |
+        Lists all the Experience programs or Ad Hoc surveys to audit emails from.
+      operationId: listPrograms
+      parameters:
+        - description: Position of the Experience program or Ad Hoc survey in the list.
+          in: query
+          name: offset
+          schema:
+            type: integer
+        - description: Maximum number of Experience programs or Ad Hoc surveys to retrieve in the list.
+          in: query
+          name: limit
+          schema:
+            type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/programs"
+          description: Request processed as expected.
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Unauthorized.
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Forbidden.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+          description: Internal server error.
+components:
+  responses:
+    "202":
+      content: {}
+      description: Accepted
+    "304":
+      content: {}
+      description: Not modified
+    "400":
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/input-validation-error"
+      description: Invalid request
+    "401":
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/error"
+      description: Unauthorized.
+    "403":
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/error"
+      description: Forbidden.
+    "404":
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/error"
+      description: Object not found.
+    "406":
+      content: {}
+      description: Not acceptable.
+    "409":
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/error"
+      description: Request conflict with current state of the server.
+    "415":
+      content: {}
+      description: Not supported.
+    "500":
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/error"
+      description: Internal server error.
+  schemas:
+    programs:
+      example:
+        _total: 10
+        items:
+          - name: Experience Program #1
+            id: 93d3f221-67f6-4f51-b417-4f5ab194728b
+          - name: Ad Hoc Survey #1
+            id: f3c689fb-7e01-4e88-9642-79079fb5d4de
+      properties:
+        items:
+          items:
+            $ref: "#/components/schemas/program"
+          type: array
+        _total:
+          format: int32
+          type: integer
+          description: Number of returned programs.
+      type: object
+    program:
+      example:
+        name: Experience Program #1
+        id: 93d3f221-67f6-4f51-b417-4f5ab194728b
+      properties:
+        id:
+          maxLength: 10240
+          type: string
+          description: ID of the Experience program or Ad Hoc survey.
+        name:
+          maxLength: 10240
+          type: string
+          description: Name of the the Experience program or Ad Hoc survey.
+      required:
+        - id
+      type: object
+    input-validation-error:
+      description: Generic validation error.
+      discriminator:
+        propertyName: type
+      properties:
+        error_type:
+          $ref: "#/components/schemas/error-type"
+        message:
+          maxLength: 10240
+          type: string
+          description: Information displayed when an error occurs.
+        error_context:
+          type: object
+          additionalProperties:
+            type: string
+          description: Error description.
+      type: object
+    error-type:
+      description: Different type of errors.
+      enum:
+        - unauthorized
+        - forbidden
+        - not_found
+        - not_allowed
+        - gone
+        - precondition_failed
+        - missing_parameter
+        - missing_field
+        - invalid_value
+        - immutable_object
+        - segment_ranker
+        - not_implemented
+        - internal_server_error
+        - invalid_input
+        - operation_not_permitted
+        - entity_in_use
+        - conflict
+      type: string
+    error:
+      properties:
+        error_code:
+          maxLength: 10240
+          type: string
+          description: Code that represents the error.
+        error_type:
+          $ref: "#/components/schemas/error-type"
+        message:
+          maxLength: 10240
+          type: string
+          description: Information displayed when an error occurs.
+      type: object
+  securitySchemes:
+    mecOauth:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{reporting-hostname}/oauth/{company}/token
+          scopes: {}
+security:
+  - mecOauth: []
