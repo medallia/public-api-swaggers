@@ -1,7 +1,11 @@
 openapi: 3.0.1
 info:
-  description: |
-        Email Auditing API allows for downloading Invitation, Reminder, and/or Feedback (Rapid) response emails in a compressed file for specific Experience programs and Ad Hoc surveys within a defined period of time. By retaining the last version of these emails for up to 30 days, companies can manage their communication policies and comply with standard industry regulations.
+  description: Email Auditing API allows for downloading Invitation, 
+    Reminder, and/or Feedback (Rapid) response emails in a compressed 
+    file for specific Experience programs and Ad Hoc surveys within a 
+    defined period of time. By retaining the last version of these 
+    emails for up to 30 days, companies can manage their communication 
+    policies and comply with standard industry regulations.
   title: Email Auditing API
   version: 0.0.2
 servers:
@@ -9,36 +13,47 @@ servers:
     variables:
       api-gateway-hostname:
         default: instance-tenant.apis.medallia.com
-        description:
-          The Medallia Experience Cloud hostname used to access Medallia Audit Email API
+        description: The Medallia Experience Cloud hostname used to 
+         access the Medallia APIs used with Medallia Reporting.
 paths:
   /audit-email/v0/emails/tarfile:
     get:
-      description: |
-        Downloads Invitation, Reminder, and/or Feedback (Rapid) response emails in a compressed (.tar.gz) file within a set period of time.
+      description: Downloads Invitation, Reminder, and/or Feedback 
+        (Rapid) response emails in a compressed (.tar.gz) file within 
+        a set period of time.
       operationId: downloadTar
       parameters:
-        - description:
-            The oldest timestamp from which emails are downloaded. Timestamp is in second granularity and is inclusive (for example, 12:00:01 includes the first second of the minute). Timestamp must be in YYYY-MM-DDTHH:mm:ssZ format (ISO 8601).
-          in: query
+        - in: query
           name: since
           required: true
+          description: The oldest timestamp from which emails are 
+            downloaded. Timestamp is in second granularity and is 
+            inclusive (for example, 12:00:01 includes the first second 
+            of the minute). Timestamp must be in YYYY-MM-DDTHH:mm:ssZ 
+            format (ISO 8601).
           schema:
-            format: date-time
             type: string
-        - description:
-            The most recent timestamp from which emails are downloaded. Timestamp is exclusive (for example, 12:00:01 excludes the first second of the minute). Timestamp must be in YYYY-MM-DDTHH:mm:ssZ format (ISO 8601).
-          in: query
+            format: date-time            
+        - in: query
           name: until
           required: true
+          description: The most recent timestamp from which emails are 
+           downloaded. Timestamp is exclusive (for example, 12:00:01 
+           excludes the first second of the minute). Timestamp must be 
+           in YYYY-MM-DDTHH:mm:ssZ format (ISO 8601).
           schema:
-            format: date-time
             type: string
-        - description: List of the Experience programs or Ad Hoc surveys IDs (separated by comma) emails are part of.
-          in: query
+            format: date-time 
+        - in: query
           name: program_ids
+          description: List of the Experience programs or Ad Hoc 
+            surveys IDs (separated by comma) emails are part of.
+          style: form
+          explode: true
           schema:
-            type: string
+            type: array
+            items:
+              type: string  
       responses:
         "200":
           content:
@@ -46,39 +61,43 @@ paths:
               schema:
                 format: binary
                 type: string
-          description: A compressed file (.tar.gz) with the emails to audit within the defined period of time (Since - Until).
+                description: A compressed file (.tar.gz) with the 
+                  emails to audit within the defined period of time 
+                  (Since - Until).
         "401":
           content:
             application/octet-stream:
               schema:
                 $ref: "#/components/schemas/error"
-          description: Unauthorized.
+                description: Unauthorized.
         "403":
           content:
             application/octet-stream:
               schema:
                 $ref: "#/components/schemas/error"
-          description: Forbidden.
+                description: Forbidden.
         "500":
           content:
             application/octet-stream:
               schema:
                 $ref: "#/components/schemas/error"
-          description: Internal server error.
+                description: Internal server error.
   /audit-email/v0/programs:
     get:
-      description: |
-        Lists all the Experience programs or Ad Hoc surveys to audit emails from.
+      description: Lists all the Experience programs or Ad Hoc surveys 
+          to audit emails from.
       operationId: listPrograms
       parameters:
-        - description: Position of the Experience program or Ad Hoc survey in the list.
-          in: query
+        - in: query
           name: offset
+          description: Position of the Experience program or Ad Hoc 
+            survey in the list.
           schema:
             type: integer
-        - description: Maximum number of Experience programs or Ad Hoc surveys to retrieve in the list.
-          in: query
+        - in: query
           name: limit
+          description: Maximum number of Experience programs or Ad Hoc 
+            surveys to retrieve in the list per page.
           schema:
             type: integer
       responses:
@@ -167,12 +186,12 @@ components:
             id: f3c689fb-7e01-4e88-9642-79079fb5d4de
       properties:
         items:
+          type: array
           items:
             $ref: "#/components/schemas/program"
-          type: array
         _total:
-          format: int32
           type: integer
+          format: int32
           description: Number of returned programs.
       type: object
     program:
@@ -181,17 +200,19 @@ components:
         id: 93d3f221-67f6-4f51-b417-4f5ab194728b
       properties:
         id:
-          maxLength: 10240
           type: string
+          maxLength: 10240
+          format: uuid
           description: ID of the Experience program or Ad Hoc survey.
         name:
-          maxLength: 10240
           type: string
+          maxLength: 10240
           description: Name of the the Experience program or Ad Hoc survey.
       required:
         - id
       type: object
     input-validation-error:
+      type: object
       description: Generic validation error.
       discriminator:
         propertyName: type
@@ -207,8 +228,8 @@ components:
           additionalProperties:
             type: string
           description: Error description.
-      type: object
     error-type:
+      type: string
       description: Different type of errors.
       enum:
         - unauthorized
@@ -227,21 +248,20 @@ components:
         - invalid_input
         - operation_not_permitted
         - entity_in_use
-        - conflict
-      type: string
+        - conflict 
     error:
+      type: object
       properties:
         error_code:
-          maxLength: 10240
           type: string
+          maxLength: 10240
           description: Code that represents the error.
         error_type:
           $ref: "#/components/schemas/error-type"
         message:
-          maxLength: 10240
           type: string
+          maxLength: 10240
           description: Information displayed when an error occurs.
-      type: object
   securitySchemes:
     mecOauth:
       type: oauth2
