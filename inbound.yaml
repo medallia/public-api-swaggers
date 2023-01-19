@@ -158,6 +158,8 @@ paths:
               $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
         412:
           description: Precondition failed
+        413:
+          description: Payload too large
         500:
           description: Internal server error
       security:
