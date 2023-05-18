@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Import API
   version: 2.1.0
-  description: 
+  description:
     The Medallia Import API enables import of data to Medallia
     Experience Cloud through a Data Import or Custom Import.
   termsOfService: https://medallia.com/about/legal/terms/api
@@ -63,7 +63,7 @@ paths:
                       type: string
                     example:
                       transaction_date: 2021-03-23T13:15:37-07:00
-                      email: mary@example.medallia.co
+                      email: mary@example.medallia.com
       responses:
         200:
           description:
@@ -485,12 +485,12 @@ components:
   schemas:
     AsyncIngestionResponse:
       type: object
-      description: Inbound file that will be processed.
+      description: Confirmation that the asynchronous file processing request has been queued for processing.
       required:
         - feed_file_id
       properties:
         feed_file_id:
-          description: FeedFile identifier.
+          description: Feed file identifier.
           type: string
           format: uuid
     FeedFileSummary:
@@ -501,11 +501,11 @@ components:
         - status
       properties:
         id:
-          description: FeedFile identifier.
+          description: Feed file identifier.
           type: string
           format: uuid
         status:
-          description: The current FeedFile status.
+          description: The current feed file status.
           type: string
           enum:
             - QUEUED
