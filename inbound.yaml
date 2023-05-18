@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
   title: Import API
-  version: 1.0.0
-  description:
+  version: 2.1.0
+  description: 
     The Medallia Import API enables import of data to Medallia
     Experience Cloud through a Data Import or Custom Import.
   termsOfService: https://medallia.com/about/legal/terms/api
@@ -15,20 +15,14 @@ servers:
           The Medallia Experience Cloud hostname used to access
           Medallia Reporting
 paths:
-  /inbound/v1/{name}:
+  /inbound/v1/{importer-name}:
     post:
       tags:
         - Import
       description: Performs a data import
-      operationId: import
+      operationId: importDataV1
       parameters:
-        - in: path
-          name: name
-          description: The name of the importer
-          required: true
-          schema:
-            type: string
-            format: identifier
+      - $ref: "#/components/parameters/feed-name"
       requestBody:
         description: The data to be imported
         required: true
@@ -69,7 +63,7 @@ paths:
                       type: string
                     example:
                       transaction_date: 2021-03-23T13:15:37-07:00
-                      email: mary@example.medallia.com
+                      email: mary@example.medallia.co
       responses:
         200:
           description:
@@ -164,7 +158,274 @@ paths:
           description: Internal server error
       security:
         - mecOauth: []
+  /inbound/v2/async/{importer-name}:
+    post:
+      tags:
+        - Import
+      description:
+        Performs an asynchronous data import, returning the ID of
+        the feed file created so processing status can be queried
+        later.
+      operationId: importDataV2
+      parameters:
+      - $ref: "#/components/parameters/feed-name"
+      requestBody:
+        description: The data to be imported
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: object
+                  additionalProperties:
+                    type: string
+                  example:
+                    transaction_date: 2021-03-23T13:15:37-07:00
+                    email: mary@example.medallia.com
+                - type: array
+                  items:
+                    type: object
+                    additionalProperties:
+                      type: string
+                    example:
+                      transaction_date: 2021-03-23T13:15:37-07:00
+                      email: mary@example.medallia.com
+          text/csv:
+            schema:
+              type: string
+          text/xml:
+            schema:
+              oneOf:
+                - type: object
+                  additionalProperties:
+                    type: string
+                  example:
+                    transaction_date: 2021-03-23T13:15:37-07:00
+                    email: mary@example.medallia.com
+                - type: array
+                  items:
+                    type: object
+                    additionalProperties:
+                      type: string
+                    example:
+                      transaction_date: 2021-03-23T13:15:37-07:00
+                      email: mary@example.medallia.com
+      responses:
+        202:
+          description: The response to a data import that is processed asynchronously
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AsyncIngestionResponse"
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        405:
+          description: The feed resource configuration is not compatible with this API
+            resource. Please change the configuration of your feed resour
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        412:
+          description: Precondition failed
+        413:
+          description: Payload too large
+        500:
+          description: Internal server error
+      security:
+          - mecOauth: []
+  /inbound/v2/feedfiles/{id}:
+    parameters:
+      - $ref: "#/components/parameters/feed-file-id"
+    get:
+      tags:
+        - Feed File
+      description: Provides the summary statistics of a feed file import
+      operationId: getSummaryFeedFileResults
+      responses:
+        200:
+          description: Successfully obtained the feed file statistics
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FeedFileSummary"
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found.
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        500:
+          description: Internal server error
+      security:
+          - mecOauth: []
+  /inbound/v2/feedfiles/{id}/detailed-results:
+    parameters:
+      - $ref: "#/components/parameters/feed-file-id"
+    get:
+      description: Provides the detailed processing results of a Feed File.
+      tags:
+        - Feed File
+      operationId: getDetailedFeedFileResults
+      responses:
+        200:
+          description: Successfully obtained the detailed results.
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DetailedResults"
+        400:
+          description: Failed to obtain the detailed results.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found.
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        500:
+          description: Internal server error
+      security:
+          - mecOauth: []
 components:
+  parameters:
+    feed-name:
+      name: importer-name
+      in: path
+      description: The name of the importer
+      required: true
+      schema:
+        type: string
+        format: identifier
+    feed-file-id:
+      name: id
+      in: path
+      description: The identifier which represents an asynchronous data import known as a feed file
+      required: true
+      schema:
+        type: string
+        format: uuid
   headers:
     X-RateLimit-Limit-day:
       description: The number of requests allowed in total in a 24-hour period. Deprecated as of Sept. 2022 in favor of X-RateLimit-Limit.
@@ -221,6 +482,240 @@ components:
         type: string
         format: identifier
       example: 94615edd-d9d0-4921-8b3e-60615b3d3431
+  schemas:
+    AsyncIngestionResponse:
+      type: object
+      description: Inbound file that will be processed.
+      required:
+        - feed_file_id
+      properties:
+        feed_file_id:
+          description: FeedFile identifier.
+          type: string
+          format: uuid
+    FeedFileSummary:
+      description: Summary stats for a feed file
+      type: object
+      required:
+        - id
+        - status
+      properties:
+        id:
+          description: FeedFile identifier.
+          type: string
+          format: uuid
+        status:
+          description: The current FeedFile status.
+          type: string
+          enum:
+            - QUEUED
+            - PROCESSING
+            - CANCELLED
+            - ERROR
+            - COMPLETED
+            - COMPLETED_PENDING_RESULTS
+            - COMPLETED_RESULTS_READY
+            - COMPLETED_RESULTS_UNAVAILABLE
+        stats:
+          description: Information about a processed feed file
+          type: object
+          required:
+            - creation_date
+            - processing_mode
+          properties:
+            records:
+              description: Aggregate record stats
+              type: object
+              required:
+                - input_count
+              properties:
+                input_count:
+                  description: Total input record count
+                  type: integer
+                success_count:
+                  description: Success record count
+                  type: integer
+                discarded_count:
+                  description: Discarded record count
+                  type: integer
+                duplicated_count:
+                  description: Duplicate record count
+                  type: integer
+            creation_date:
+              description: Job creation time (if available)
+              type: string
+              format: date-time
+            processing_start_date:
+              description: Processing start time (if available)
+              type: string
+              format: date-time
+            processing_end_date:
+              description: Processing end time (if available)
+              type: string
+              format: date-time
+            processing_mode:
+              description: The feed file processing mode used for the job
+              type: string
+              enum:
+                - PRETEND
+                - ACTIVE
+            processing_error_description:
+              description: Processing error description. If available
+              type: string
+    DetailedResults:
+      type: object
+      description: Detailed results of a processed FeedFile.
+      properties:
+        processing_results:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProcessingResult"
+        input_to_field_mappings:
+          type: object
+          description: The fields that the input columns are being mapped to.
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        processing_error_description:
+          description: Processing error description. If available
+          type: string
+    ProcessingResult:
+      type: object
+      description: Processing results of an entity type specified in the importer schema
+      required:
+        - entity_name
+      properties:
+        entity_name:
+          type: string
+          description: Type of entity imported such as record, unit, account, etc.
+          example: record
+        successful_results:
+          type: array
+          items:
+            $ref: "#/components/schemas/SuccessfulProcessedEntryResult"
+        discarded_results:
+          type: array
+          items:
+            $ref: "#/components/schemas/DiscardedResult"
+    SuccessfulProcessedEntryResult:
+      type: object
+      description: The result of a successfully processed entry.
+      required:
+        - input_position
+        - result
+        - has_duplicate_record_info
+        - field_values
+      properties:
+        input_position:
+          type: integer
+          description:
+            The position of the record in the input array of the import request.
+          example: 1
+        result:
+          type: string
+          description: The summary result.
+          example: Selected for sampling
+        has_duplicate_record_info:
+          type: boolean
+          description:
+            Denotes if an entity is updated and at least one field on the entity
+            contains duplicate information provided in the import request
+        field_values:
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/FieldValue"
+    FieldValue:
+      type: object
+      description:
+        The detailed changes for a field value set or updated from the input
+      required:
+        - current_content
+        - value_modified
+        - dup_checking
+      properties:
+        modified_content:
+          type: string
+          description:
+            When a field value is updated, this field contains the content that
+            was modified before the import processing
+        current_content:
+          type: string
+          description:
+            The current value of the field after the import processing
+        value_modified:
+          type: boolean
+          description:
+            True if the value was modified
+        dup_checking:
+          type: boolean
+          description:
+            True if the field is being used as part of a unique index
+    DiscardedResult:
+      type: object
+      description: The result of a discarded entry
+      required:
+        - input_position
+        - input_values
+        - issues
+      properties:
+        input_position:
+          type: integer
+          description:
+            The position of the record in the input array of the import request
+          example: 1
+        input_values:
+          type: object
+          description:
+            The raw input of the values that were provided in the import request
+          additionalProperties:
+            type: string
+          example:
+            transaction_date: 2021-03-23T13:15:37-07:00
+            email: mary@example.medallia.com
+        issues:
+          type: array
+          items:
+            $ref: "#/components/schemas/DiscardedResultIssue"
+    DiscardedResultIssue:
+      type: object
+      required:
+        - consequence
+        - explanation
+        - detail
+        - cause
+      properties:
+        consequence:
+          type: string
+          description: The consequence of the issue.
+          example: Record discarded
+        explanation:
+          type: string
+          description: The explanation of the issue.
+          example: missing required value
+        detail:
+          type: string
+          description: The details of the issue.
+          example: First name (e_firstname)
+        cause:
+          type: string
+          description: The description of the issue cause.
+          example: Issues associated with e_firstname ('First name')
+    ErrorMessage:
+      type: object
+      description: The representation of an error message.
+      required:
+        - error_type
+        - message
+      properties:
+        error_type:
+          type: string
+          description: The type of the error.
+          example: not_found
+        message:
+          type: string
+          description: The error message.
+          example: There is no resource named test_webfeed
   securitySchemes:
     mecOauth:
       type: oauth2
