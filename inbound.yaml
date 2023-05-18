@@ -165,7 +165,9 @@ paths:
       description:
         Performs an asynchronous data import, returning the ID of
         the feed file created so processing status can be queried
-        later.
+        later. This endpoint is only available in Medallia Experience Cloud 2023 Summer Release
+        as an opt-in feature. Reach out to your Medallia contact to
+        enable this API feature as part of the Early Adopter Program.
       operationId: importDataV2
       parameters:
       - $ref: "#/components/parameters/feed-name"
@@ -263,7 +265,7 @@ paths:
                 $ref: "#/components/schemas/ErrorMessage"
         405:
           description: The feed resource configuration is not compatible with this API
-            resource. Please change the configuration of your feed resour
+            resource. Please change the configuration of your feed resource
           content:
             application/json:
               schema:
@@ -282,7 +284,10 @@ paths:
     get:
       tags:
         - Feed File
-      description: Provides the summary statistics of a feed file import
+      description: Provides the summary statistics of a feed file import. 
+      This endpoint is only available in Medallia Experience Cloud 2023 Summer Release 
+      as an opt-in feature. Reach out to your Medallia contact to enable this API feature 
+      as part of the Early Adopter Program.
       operationId: getSummaryFeedFileResults
       responses:
         200:
@@ -344,6 +349,9 @@ paths:
       - $ref: "#/components/parameters/feed-file-id"
     get:
       description: Provides the detailed processing results of a Feed File.
+      This endpoint is only available in Medallia Experience Cloud 2023 Summer Release 
+      as an opt-in feature. Reach out to your Medallia contact to enable this API feature 
+      as part of the Early Adopter Program.
       tags:
         - Feed File
       operationId: getDetailedFeedFileResults
