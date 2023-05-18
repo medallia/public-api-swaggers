@@ -3,7 +3,7 @@ info:
   title: Import API
   version: 2.1.0
   description:
-    The Medallia Import API enables import of data to Medallia
+    The Medallia Import API v1 enables import of data to Medallia
     Experience Cloud through a Data Import or Custom Import.
   termsOfService: https://medallia.com/about/legal/terms/api
 servers:
@@ -13,18 +13,18 @@ servers:
         default: instance-tenant.apis.medallia.com
         description:
           The Medallia Experience Cloud hostname used to access
-          Medallia Reporting
+          Medallia Reporting.
 paths:
   /inbound/v1/{importer-name}:
     post:
       tags:
         - Import
-      description: Performs a data import
+      description: Performs a data import.
       operationId: importDataV1
       parameters:
       - $ref: "#/components/parameters/feed-name"
       requestBody:
-        description: The data to be imported
+        description: The data to be imported.
         required: true
         content:
           application/json:
@@ -67,7 +67,7 @@ paths:
       responses:
         200:
           description:
-            The response to a data import that is processed synchronously
+            The response to a data import that is processed synchronously.
           headers:
             X-RateLimit-Limit-day:
               $ref: '#/components/headers/X-RateLimit-Limit-day'
@@ -96,12 +96,12 @@ paths:
                 properties:
                   records:
                     type: integer
-                    description: The number of records processed
+                    description: The number of records processed.
                   duplicates:
                     type: integer
                     description:
                       The number of records found to match an existing
-                      record in the system
+                      record in the system.
                   rejects:
                     type: integer
                     description:
@@ -109,7 +109,7 @@ paths:
                       for some reason
         202:
           description:
-            The response to a data import that is processed asynchronously
+            The response to a data import that is processed asynchronously.
           headers:
             X-RateLimit-Limit-day:
               $ref: '#/components/headers/X-RateLimit-Limit-day'
@@ -263,7 +263,7 @@ paths:
                 $ref: "#/components/schemas/ErrorMessage"
         405:
           description: The feed resource configuration is not compatible with this API
-            resource. Please change the configuration of your feed resour
+            resource. Please change the configuration of your feed resource.
           content:
             application/json:
               schema:
@@ -282,11 +282,11 @@ paths:
     get:
       tags:
         - Feed File
-      description: Provides the summary statistics of a feed file import
+      description: Provides the summary statistics of a feed file import.
       operationId: getSummaryFeedFileResults
       responses:
         200:
-          description: Successfully obtained the feed file statistics
+          description: Successfully obtained the feed-file statistics.
           headers:
             X-RateLimit-Limit-day:
               $ref: '#/components/headers/X-RateLimit-Limit-day'
@@ -413,7 +413,7 @@ components:
     feed-name:
       name: importer-name
       in: path
-      description: The name of the importer
+      description: The name of the importer.
       required: true
       schema:
         type: string
@@ -421,14 +421,14 @@ components:
     feed-file-id:
       name: id
       in: path
-      description: The identifier which represents an asynchronous data import known as a feed file
+      description: The identifier which represents an asynchronous data import known as a feed file.
       required: true
       schema:
         type: string
         format: uuid
   headers:
     X-RateLimit-Limit-day:
-      description: The number of requests allowed in total in a 24-hour period. Deprecated as of Sept. 2022 in favor of X-RateLimit-Limit.
+      description: The total number of requests allowed in a 24-hour period. Deprecated as of Sept. 2022 in favor of X-RateLimit-Limit.
       schema:
         type: integer
       example: 10000
@@ -477,7 +477,7 @@ components:
         type: integer
       example: 10
     X-Medallia-Rpc-Request-Id:
-      description: The request ID, used by Medallia support for troubleshooting
+      description: The request ID, used by Medallia support for troubleshooting.
       schema:
         type: string
         format: identifier
@@ -485,16 +485,16 @@ components:
   schemas:
     AsyncIngestionResponse:
       type: object
-      description: Confirmation that the asynchronous file processing request has been queued for processing.
+      description: Confirmation that the asynchronous file-processing request has been queued for processing.
       required:
         - feed_file_id
       properties:
         feed_file_id:
-          description: Feed file identifier.
+          description: Feed-file identifier.
           type: string
           format: uuid
     FeedFileSummary:
-      description: Summary stats for a feed file
+      description: Summary stats for a feed file.
       type: object
       required:
         - id
@@ -517,50 +517,50 @@ components:
             - COMPLETED_RESULTS_READY
             - COMPLETED_RESULTS_UNAVAILABLE
         stats:
-          description: Information about a processed feed file
+          description: Information about a processed feed file.
           type: object
           required:
             - creation_date
             - processing_mode
           properties:
             records:
-              description: Aggregate record stats
+              description: Aggregate record stats.
               type: object
               required:
                 - input_count
               properties:
                 input_count:
-                  description: Total input record count
+                  description: Total input record count.
                   type: integer
                 success_count:
-                  description: Success record count
+                  description: Success record count.
                   type: integer
                 discarded_count:
-                  description: Discarded record count
+                  description: Discarded record count.
                   type: integer
                 duplicated_count:
-                  description: Duplicate record count
+                  description: Duplicate record count.
                   type: integer
             creation_date:
-              description: Job creation time (if available)
+              description: Job creation time (if available).
               type: string
               format: date-time
             processing_start_date:
-              description: Processing start time (if available)
+              description: Processing start time (if available).
               type: string
               format: date-time
             processing_end_date:
-              description: Processing end time (if available)
+              description: Processing end time (if available).
               type: string
               format: date-time
             processing_mode:
-              description: The feed file processing mode used for the job
+              description: The feed file processing mode used for the job.
               type: string
               enum:
                 - PRETEND
                 - ACTIVE
             processing_error_description:
-              description: Processing error description. If available
+              description: Processing error description (if available).
               type: string
     DetailedResults:
       type: object
@@ -578,11 +578,11 @@ components:
             items:
               type: string
         processing_error_description:
-          description: Processing error description. If available
+          description: Processing error description (if available).
           type: string
     ProcessingResult:
       type: object
-      description: Processing results of an entity type specified in the importer schema
+      description: Processing results of an entity type specified in the importer schema.
       required:
         - entity_name
       properties:
@@ -628,7 +628,7 @@ components:
     FieldValue:
       type: object
       description:
-        The detailed changes for a field value set or updated from the input
+        The detailed changes for a field value set or updated from the input.
       required:
         - current_content
         - value_modified
@@ -638,22 +638,22 @@ components:
           type: string
           description:
             When a field value is updated, this field contains the content that
-            was modified before the import processing
+            was modified before the import processing.
         current_content:
           type: string
           description:
-            The current value of the field after the import processing
+            The current value of the field after the import processing.
         value_modified:
           type: boolean
           description:
-            True if the value was modified
+            'True' if the value was modified.
         dup_checking:
           type: boolean
           description:
-            True if the field is being used as part of a unique index
+            'True' if the field is being used as part of a unique index.
     DiscardedResult:
       type: object
-      description: The result of a discarded entry
+      description: The result of a discarded entry.
       required:
         - input_position
         - input_values
@@ -662,12 +662,12 @@ components:
         input_position:
           type: integer
           description:
-            The position of the record in the input array of the import request
+            The position of the record in the input array of the import request.
           example: 1
         input_values:
           type: object
           description:
-            The raw input of the values that were provided in the import request
+            The raw input of the values that were provided in the import request.
           additionalProperties:
             type: string
           example:
