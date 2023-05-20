@@ -165,9 +165,10 @@ paths:
       description:
         Performs an asynchronous data import, returning the ID of
         the feed file created so processing status can be queried
-        later. This endpoint is only available in Medallia Experience Cloud 2023 Summer Release
-        as an opt-in feature. Reach out to your Medallia contact to
-        enable this API feature as part of the Early Adopter Program.
+        later.  This endpoint is only available in Medallia Experience
+        Cloud 2023 Summer Releaseas an opt-in feature.  Reach out
+        to your Medallia contact to enable this API feature as part
+        of the Early Adopter Program.
       operationId: importDataV2
       parameters:
       - $ref: "#/components/parameters/feed-name"
@@ -284,10 +285,12 @@ paths:
     get:
       tags:
         - Feed File
-      description: Provides the summary statistics of a feed file import. 
-      This endpoint is only available in Medallia Experience Cloud 2023 Summer Release 
-      as an opt-in feature. Reach out to your Medallia contact to enable this API feature 
-      as part of the Early Adopter Program.
+      description:
+        Provides the summary statistics of a feed file import. 
+        This endpoint is only available in Medallia Experience
+        Cloud 2023 Summer Release as an opt-in feature.  Reach
+        out to your Medallia contact to enable this API feature 
+        as part of the Early Adopter Program.
       operationId: getSummaryFeedFileResults
       responses:
         200:
@@ -348,10 +351,12 @@ paths:
     parameters:
       - $ref: "#/components/parameters/feed-file-id"
     get:
-      description: Provides the detailed processing results of a Feed File.
-      This endpoint is only available in Medallia Experience Cloud 2023 Summer Release 
-      as an opt-in feature. Reach out to your Medallia contact to enable this API feature 
-      as part of the Early Adopter Program.
+      description:
+        Provides the detailed processing results of a Feed File.
+        This endpoint is only available in Medallia Experience
+        Cloud 2023 Summer Release as an opt-in feature.  Reach
+        out to your Medallia contact to enable this API feature 
+        as part of the Early Adopter Program.
       tags:
         - Feed File
       operationId: getDetailedFeedFileResults
