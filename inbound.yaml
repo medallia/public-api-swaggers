@@ -166,7 +166,7 @@ paths:
         Performs an asynchronous data import, returning the ID of
         the feed file created so processing status can be queried
         later.  This endpoint is only available in Medallia Experience
-        Cloud 2023 Summer Releaseas an opt-in feature.  Reach out
+        Cloud 2023 Summer Release as an opt-in feature.  Reach out
         to your Medallia contact to enable this API feature as part
         of the Early Adopter Program.
       operationId: importDataV2
@@ -284,7 +284,7 @@ paths:
       - $ref: "#/components/parameters/feed-file-id"
     get:
       tags:
-        - Feed File
+        - Import
       description:
         Provides the summary statistics of a feed file import. 
         This endpoint is only available in Medallia Experience
@@ -358,7 +358,7 @@ paths:
         out to your Medallia contact to enable this API feature 
         as part of the Early Adopter Program.
       tags:
-        - Feed File
+        - Import
       operationId: getDetailedFeedFileResults
       responses:
         200:
