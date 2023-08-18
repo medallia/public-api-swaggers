@@ -141,7 +141,8 @@ paths:
     get:
       tags:
         - Import
-      description: Discover all available endpoints to import data
+      description: Discover all available endpoints to import data. This endpoint is available in Medallia Experience
+        Cloud 2023 Fall Release as a generally available beta feature.
       operationId: introspectImportAPICollection
       responses:
         200:
@@ -201,7 +202,8 @@ paths:
     get:
       tags:
         - Import
-      description: Inspect an importer to uncover input data requirements
+      description: Inspect an importer to uncover input data requirements. This endpoint is available in Medallia Experience
+        Cloud 2023 Fall Release as a generally available beta feature.
       operationId: introspectImportAPIEndpoint
       responses:
         200:
