@@ -131,29 +131,8 @@ paths:
           description: Unauthorized
         403:
           description: Forbidden
-        404:
-          description: Object not found
-          headers:
-            X-RateLimit-Limit-day:
-              $ref: '#/components/headers/X-RateLimit-Limit-day'
-            X-RateLimit-Remaining-day:
-              $ref: '#/components/headers/X-RateLimit-Remaining-day'
-            X-RateLimit-Limit-second:
-              $ref: '#/components/headers/X-RateLimit-Limit-second'
-            X-RateLimit-Remaining-second:
-              $ref: '#/components/headers/X-RateLimit-Remaining-second'
-            X-RateLimit-Limit:
-              $ref: '#/components/headers/X-RateLimit-Limit'
-            X-RateLimit-Remaining:
-              $ref: '#/components/headers/X-RateLimit-Remaining'
-            X-RateLimit-Reset:
-              $ref: '#/components/headers/X-RateLimit-Reset'
-            X-Medallia-Rpc-Request-Id:
-              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
         412:
           description: Precondition failed
-        413:
-          description: Payload too large
         500:
           description: Internal server error
       security:
@@ -214,8 +193,6 @@ paths:
               $ref: '#/components/headers/X-RateLimit-Reset'
             X-Medallia-Rpc-Request-Id:
               $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
-        412:
-          description: Precondition failed
         500:
           description: Internal server error
       security:
@@ -274,8 +251,6 @@ paths:
               $ref: '#/components/headers/X-RateLimit-Reset'
             X-Medallia-Rpc-Request-Id:
               $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
-        412:
-          description: Precondition failed
         500:
           description: Internal server error
       security:
