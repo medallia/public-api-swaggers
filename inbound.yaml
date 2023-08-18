@@ -381,7 +381,7 @@ paths:
       - $ref: "#/components/parameters/feed-file-id"
     get:
       tags:
-        - Import
+        - Feed File
       description:
         Provides the summary statistics of a feed file import. 
         This endpoint is only available in Medallia Experience
@@ -455,7 +455,7 @@ paths:
         out to your Medallia contact to enable this API feature 
         as part of the Early Adopter Program.
       tags:
-        - Import
+        - Feed File
       operationId: getDetailedFeedFileResults
       responses:
         200:
