@@ -202,8 +202,9 @@ paths:
     get:
       tags:
         - Import
-      description: Inspect an importer to uncover input data requirements. This endpoint is available in Medallia Experience
-        Cloud 2023 Fall Release as a generally available beta feature.
+      description: Inspect an importer to uncover input data requirements. 
+      This endpoint is available in Medallia Experience Cloud 2023 Fall Release
+      as a generally available beta feature.
       operationId: introspectImportAPIEndpoint
       responses:
         200:
@@ -597,7 +598,7 @@ components:
   schemas:
     TruncatedOpenAPIObject:
       type: object
-      description: A truncated Open API object to list the basic information of all available Import API endpoint
+      description: A truncated Open API object to list the basic information of all available Import API endpoints
       required:
         - openapi
         - info
@@ -628,7 +629,7 @@ components:
             description: Describes an available Import API path to post data to
             type: object
             additionalProperties:
-              description: Displays the available method to interact with that API path. Typically will be post
+              description: Displays the available methods to interact with that API path
               type: object
               properties:
                 summary: 
