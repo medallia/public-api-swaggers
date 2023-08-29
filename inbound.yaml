@@ -141,8 +141,9 @@ paths:
     get:
       tags:
         - Import
-      description: Discover all available endpoints to import data. This endpoint is available in Medallia Experience
-        Cloud 2023 Fall Release as a generally available beta feature.
+      description:
+        Discover all available endpoints to import data. This endpoint is available in
+        Medallia Experience Cloud 2023 Fall Release as a generally available beta feature.
       operationId: introspectImportAPICollection
       responses:
         200:
@@ -202,9 +203,10 @@ paths:
     get:
       tags:
         - Import
-      description: Inspect an importer to uncover input data requirements. 
-      This endpoint is available in Medallia Experience Cloud 2023 Fall Release
-      as a generally available beta feature.
+      description:
+        Inspect an importer to uncover input data requirements.  This endpoint is
+        available in Medallia Experience Cloud 2023 Fall Release as a generally
+        available beta feature.
       operationId: introspectImportAPIEndpoint
       responses:
         200:
@@ -365,7 +367,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorMessage"
         405:
-          description: The feed resource configuration is not compatible with this API
+          description:
+            The feed resource configuration is not compatible with this API
             resource. Please change the configuration of your feed resource.
           content:
             application/json:
