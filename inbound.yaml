@@ -208,6 +208,8 @@ paths:
         available in Medallia Experience Cloud 2023 Fall Release as a generally
         available beta feature.
       operationId: introspectImportAPIEndpoint
+      parameters:
+      - $ref: "#/components/parameters/feed-name"
       responses:
         200:
           description: Retrieve the full Open API 3.0.1 spec of an endpoint
@@ -229,10 +231,12 @@ paths:
             X-Medallia-Rpc-Request-Id:
               $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
           content:
-            description: Content matches OpenAPI Object as per https://swagger.io/specification/
             application/json:
-              default: true
+              schema:
+                description: Content matches OpenAPI Object as per https://swagger.io/specification/
             application/yaml:
+              schema:
+                description: Content matches OpenAPI Object as per https://swagger.io/specification/
         401:
           description: Unauthorized
         403:
