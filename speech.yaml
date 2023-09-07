@@ -19,7 +19,7 @@ paths:
     post:
       tags:
         - Speech
-      summary: Queues recordings for processing
+      description: Queues recordings for processing
       operationId: speechV0BulkInjest
       requestBody:
         description: A list of the recordings to process, up to 1,000 per request
