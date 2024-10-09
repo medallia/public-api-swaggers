@@ -296,6 +296,8 @@ components:
             transcription for accuracy words that are not in the 
             language model's standard vocabulary.
           default: {}
+          example: 
+            - { "Matias": ["Marisa", "Mateeas"],"other": [], "Juampa" :["Juanpa", "Juan Pablo"]}
         apply_redaction:
           type: string
           description: Applies redaction to the audio and transcribed text
