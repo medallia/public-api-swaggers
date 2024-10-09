@@ -285,6 +285,17 @@ components:
             in key/value format, where the key will be replaced
             by the value in transcription.
           default: {}
+        oov:
+          type: object
+          additionalProperties:
+            type: string
+          description:
+            A set of custom vocabulary terms with optional soundouts. 
+            Accepts JSON dictionary and list formats, or a comma-
+            delineated string of text. Custom vocabulary improves
+            transcription for accuracy words that are not in the 
+            language model's standard vocabulary.
+          default: {}
         apply_redaction:
           type: string
           description: Applies redaction to the audio and transcribed text
