@@ -4,7 +4,7 @@ info:
   version: 1.0.0
   description:
     The Medallia Roles API enables auditing roles in Medallia Experience
-    Cloud.  Roles define features and permissions.
+    Cloud. Roles are sets of permissions that determine the access and capabilities of a user. Every user is assigned at least one primary role, but they can also have multiple secondary roles. Each role has unique permissions and capabilities based on user activities and report needs.
   termsOfService: https://medallia.com/about/legal/terms/api
 servers:
   - url: 'https://{api-gateway-hostname}'
@@ -24,7 +24,7 @@ paths:
       parameters:
         - name: role
           in: query
-          description: The role name to filter results
+          description: The role name to filter results (e.g.: [CC] Agent)
           required: false
           schema:
             type: array
@@ -108,7 +108,7 @@ paths:
       parameters:
         - in: path
           name: role
-          description: The role name
+          description: The role name (e.g.: [CC] Agent)
           required: true
           schema:
             type: string
@@ -258,14 +258,20 @@ components:
           type: string
           format: identifier
           description:
-            The logical administrative group of which this role is part
+            The logical administrative group of which this role is part (For example, consider a company with roles specific to sales regions. In this scenario, there might be a role for Western Agent, Western Team Lead, Western Regional Manager, and so on, with similar roles for users in the Eastern sales region.)
           maxLength: 10240
         role_type:
           type: string
           description: The role's specific type
           enum:
             - admin
-            - other
+            - CLF Manager
+            - Executive
+            - Insights
+            - Frontline
+            - Frontline Manager
+            - Regional Manager
+            - Other
         data-views:
           type: array
           items:
@@ -273,7 +279,7 @@ components:
             properties:
               data-view:
                 type: string
-                description: The name of the data view
+                description: The name of the data view. Data access is determined by data views assigned to roles
                 maxLength: 10240
         display_order:
           type: integer
@@ -288,7 +294,7 @@ components:
                   permission:
                     type: string
                     description:
-                      See [Administrative Permissions](https://docs.medallia.com/admin/index.html#Help/RolesAndPermissions/Administrative_permissions.html) for details.
+                      See [Administrative Permissions](https://docs.medallia.com/?resourceId=mec-administrative-permissions) for details.
                     enum:
                       - Access Crowdicity
                       - Access Journey Analytics
@@ -374,7 +380,7 @@ components:
                   permission:
                     type: string
                     description:
-                      See [Reporting Permissions](https://docs.medallia.com/admin/index.html#Help/RolesAndPermissions/Reporting_permissions.html)
+                      See [Reporting Permissions](https://docs.medallia.com/?resourceId=mec-reporting-permissions)
                     enum:
                       - Access Mobile App
                       - Access Voices
@@ -506,15 +512,15 @@ components:
               format: date-time
               readOnly: true
               description:
-                The timestamp when the role was last modified, in
-                ISO-8601 format `yyyy-MM-dd'T'HH:mm:ss.SSSZZ`
+                The timestamp when the role was created, in
+                ISO-8601 format `yyyy-MM-dd'T'HH:mm:ss.SSSZZ` (e.g.: 2021-03-22T11:30:00-08:00)
             modified_on:
               type: string
               format: date-time
               readOnly: true
               description:
                 The timestamp when the role was last modified, in
-                ISO-8601 format `yyyy-MM-dd'T'HH:mm:ss.SSSZZ`
+                ISO-8601 format `yyyy-MM-dd'T'HH:mm:ss.SSSZZ` (e.g.: 2021-03-22T11:30:00-08:00)
   securitySchemes:
     mecOauth:
       type: oauth2
