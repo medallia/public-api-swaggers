@@ -4,8 +4,7 @@ info:
   version: 1.0.0
   description:
     The Medallia Users API enables auditing and management of user accounts
-    in Medallia Experience Cloud.  User accounts belong to one or more roles
-    that define features and permissions.
+    in Medallia Experience Cloud. User accounts are assigned one or more roles that determine their access permissions.
   termsOfService: https://medallia.com/about/legal/terms/api
 servers:
   - url: 'https://{api-gateway-hostname}'
@@ -131,7 +130,7 @@ paths:
       description: Creates a new user
       operationId: createUser
       requestBody:
-        description: The user to create
+        description: New user data
         required: true
         content:
           application/json:
@@ -153,7 +152,7 @@ paths:
               - false
       responses:
         200:
-          description: The created user account
+          description: The new user account
           headers:
             X-RateLimit-Limit-day:
               $ref: '#/components/headers/X-RateLimit-Limit-day'
@@ -702,10 +701,10 @@ components:
     User:
       type: object
       required:
+        - username
         - first_name
         - last_name
         - roles
-        - username
       properties:
         username:
           type: string
@@ -732,7 +731,7 @@ components:
         automatic_update:
           type: boolean
           description:
-            Indicates whether the user account is able to be automatically
+            Indicates whether the user account can be be automatically
             updated by Medallia ETL processes
         excluded_from_user_activity:
           type: boolean
@@ -802,7 +801,7 @@ components:
               readOnly: true
               description:
                 The timestamp when the user account was created, in
-                ISO-8601 format `yyyy-MM-dd'T'HH:mm:ss.SSSZZ`
+                ISO-8601 format `yyyy-MM-dd'T'HH:mm:ss.SSSZZ` (e.g. 2024-01-01 11:30:00-0800)
             created_by:
               type: string
               readOnly: true
@@ -818,7 +817,7 @@ components:
               readOnly: true
               description:
                 The timestamp when the user account was last modified, in
-                ISO-8601 format `yyyy-MM-dd'T'HH:mm:ss.SSSZZ`
+                ISO-8601 format `yyyy-MM-dd'T'HH:mm:ss.SSSZZ` (e.g. 2024-01-01 11:30:00-0800)
             modified_by:
               type: string
               readOnly: true
@@ -844,32 +843,32 @@ components:
               readOnly: true
               description:
                 The timestamp when the user account last authenticated, in
-                ISO-8601 format `yyyy-MM-dd'T'HH:mm:ss.SSSZZ`
+                ISO-8601 format `yyyy-MM-dd'T'HH:mm:ss.SSSZZ` (e.g. 2024-01-01 11:30:00-0800)
             login_count:
               type: integer
               format: int32
               readOnly: true
-              description: The number of successful authentications for the user
+              description: The number of successful authentication attempts for the user
             failed_login_count:
               type: integer
               format: int32
               readOnly: true
               description:
-                The number of sequential, unsuccessful authentications
+                The number of sequential, unsuccessful authentication attempts
             password_last_set:
               type: string
               format: date-time
               readOnly: true
               description:
                 The timestamp when the account's password was last set, in
-                ISO-8601 format `yyyy-MM-dd'T'HH:mm:ss.SSSZZ`
+                ISO-8601 format `yyyy-MM-dd'T'HH:mm:ss.SSSZZ` (e.g. 2024-01-01 11:30:00-0800)
             password_last_emailed:
               type: string
               format: date-time
               readOnly: true
               description:
                 The timestamp when a password reset link for the account
-                was last emailed, in ISO-8601 format `yyyy-MM-dd'T'HH:mm:ss.SSSZZ`
+                was last emailed, in ISO-8601 format `yyyy-MM-dd'T'HH:mm:ss.SSSZZ` (e.g. 2024-01-01 11:30:00-0800)
             password_not_set_reason:
               type: string
               readOnly: true
@@ -921,8 +920,8 @@ components:
         segments:
           type: array
           description:
-            Segments associates the role with records meeting a specific
-            criteria based on field values in the record
+            Segments associates the role with records that meet a specific
+            criteria based on record field values
           items:
             type: object
             description: Reference to a survey field
