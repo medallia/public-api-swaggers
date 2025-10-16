@@ -1,0 +1,14 @@
+name: Sync surveys.yaml to ReadMe
+on:
+  push:
+    branches:
+      - main
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: readmeio/rdme@7.3.0
+        with:
+          rdme: openapi ./surveys.yaml --key=${{ secrets.ReadmeIoApiKey }} --id=6070a8240147d400165ed8af

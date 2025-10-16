@@ -1,0 +1,2392 @@
+openapi: 3.0.0
+info:
+  title: Translations API
+  version: 1.0.0
+  description:
+    The Medallia Translations API enables exporting and importing
+    translations within Medallia Experience Cloud for localization
+    and internationalization support.
+  termsOfService: https://medallia.com/about/legal/terms/api
+servers:
+  - url: 'https://{api-gateway-hostname}'
+    variables:
+      api-gateway-hostname:
+        default: instance-tenant.apis.medallia.com
+        description:
+          The Medallia Experience Cloud hostname used to access
+          Medallia Reporting
+paths:
+  /admin/v0/translation-exports:
+    get:
+      summary: List translation exports
+      tags:
+        - Translations
+        - Translation Exports
+      description: Retrieves all translation export objects
+      operationId: adminV0TranslationExportsGet
+      parameters:
+        - name: limit
+          in: query
+          description: The maximum number of translation exports to retrieve
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: offset
+          in: query
+          description: The number of translation exports to skip before starting to collect the result set
+          required: false
+          schema:
+            type: integer 
+            format: int32
+            default: 0
+            minimum: 0
+        - name: expand
+          in: query
+          description: Comma-separated list of related entities to include in the response
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: A list of translation exports
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranslationExportList'
+        400:
+          description: Invalid request
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        406:
+          description: Not acceptable
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        409:
+          description: Request conflict with current state of the server
+        412:
+          description: Precondition failed
+        415:
+          description: Not supported
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+    post:
+      summary: Create translation export
+      tags:
+        - Translations
+        - Translation Exports
+      description: Export an Excel file with the translations using the given parameters
+      operationId: adminV0TranslationExportsPost
+      requestBody:
+        description: The translation export to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TranslationExport'
+      responses:
+        201:
+          description: The resulting translation export
+          headers:
+            ETag:
+              description: Entity Tag
+              schema:
+                type: string
+            Location:
+              description: Location of the created entity
+              schema:
+                type: string
+                format: uri
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranslationExport'
+        400:
+          description: Invalid request
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        406:
+          description: Not acceptable
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        409:
+          description: Request conflict with current state of the server
+        412:
+          description: Precondition failed
+          headers:
+            ETag:
+              description: Entity Tag
+              schema:
+                type: string
+        415:
+          description: Not supported
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+  /admin/v0/translation-exports/{translationExportId}:
+    get:
+      summary: Retrieve translation export by ID
+      tags:
+        - Translations
+        - Translation Exports
+      description: Returns details of a specific translation export by its ID
+      operationId: adminV0TranslationExportGet
+      parameters:
+        - name: translationExportId
+          in: path
+          description: The translation export identifier
+          required: true
+          schema:
+            type: string
+        - name: expand
+          in: query
+          description: Comma-separated list of related entities to include in the response
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: Translation export details
+          headers:
+            ETag:
+              description: Entity Tag
+              schema:
+                type: string
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranslationExport'
+        304:
+          description: Not modified
+        400:
+          description: Invalid request
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        406:
+          description: Not acceptable
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        409:
+          description: Request conflict with current state of the server
+        412:
+          description: Precondition failed
+          headers:
+            ETag:
+              description: Entity Tag
+              schema:
+                type: string
+        415:
+          description: Not supported
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+    delete:
+      summary: Delete translation export
+      tags:
+        - Translations
+        - Translation Exports
+      description: Deletes the translation export
+      operationId: adminV0TranslationExportDelete
+      parameters:
+        - name: translationExportId
+          in: path
+          description: The translation export identifier
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Successfully deleted the translation export
+        400:
+          description: Invalid request
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        406:
+          description: Not acceptable
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        409:
+          description: Request conflict with current state of the server
+        412:
+          description: Precondition failed
+          headers:
+            ETag:
+              description: Entity Tag
+              schema:
+                type: string
+        415:
+          description: Not supported
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessingResponse'
+        400:
+          description: Invalid request
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        406:
+          description: Not acceptable
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        409:
+          description: Request conflict with current state of the server
+        412:
+          description: Precondition failed
+        415:
+          description: Not supported
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+  /admin/v0/translation-exports/{translationExportId}/file:
+    get:
+      summary: Download translation export file
+      tags:
+        - Translations
+        - Translation Exports
+      description: Gets the exported file for the given translation export
+      operationId: adminV0TranslationExportFileGet
+      parameters:
+        - name: translationExportId
+          in: path
+          description: The translation export identifier
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: The resulting translation export file
+          headers:
+            Content-Disposition:
+              description: Content disposition header
+              schema:
+                type: string
+            ETag:
+              description: Entity Tag
+              schema:
+                type: string
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/vnd.ms-excel:
+              schema:
+                type: string
+                format: binary
+            text/csv:
+              schema:
+                type: string
+                format: binary
+        304:
+          description: Not modified
+        400:
+          description: Invalid request
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        406:
+          description: Not acceptable
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        409:
+          description: Request conflict with current state of the server
+        412:
+          description: Precondition failed
+          headers:
+            ETag:
+              description: Entity Tag
+              schema:
+                type: string
+        415:
+          description: Not supported
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+  /admin/v0/translation-imports:
+    get:
+      summary: List translation imports
+      tags:
+        - Translations
+        - Translation Imports
+      description: Retrieves all translation import objects
+      operationId: adminV0TranslationImportsGet
+      parameters:
+        - name: limit
+          in: query
+          description: The maximum number of translation imports to retrieve
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: offset
+          in: query
+          description: The number of translation imports to skip before starting to collect the result set
+          required: false
+          schema:
+            type: integer 
+            format: int32
+            default: 0
+            minimum: 0
+        - name: expand
+          in: query
+          description: Comma-separated list of related entities to include in the response
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: A list of translation imports
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranslationImportList'
+        400:
+          description: Invalid request
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        406:
+          description: Not acceptable
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        409:
+          description: Request conflict with current state of the server
+        412:
+          description: Precondition failed
+        415:
+          description: Not supported
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+    post:
+      summary: Create translation import
+      tags:
+        - Translations
+        - Translation Imports
+      description: Upload translations in an Excel file
+      operationId: adminV0TranslationImportsPost
+      requestBody:
+        description: The file to import
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The translation file to import
+              required:
+                - file
+      responses:
+        200:
+          description: Successfully created the translation import
+          headers:
+            ETag:
+              description: Entity Tag
+              schema:
+                type: string
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranslationImport'
+        400:
+          description: Invalid request
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        406:
+          description: Not acceptable
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        409:
+          description: Request conflict with current state of the server
+        412:
+          description: Precondition failed
+          headers:
+            ETag:
+              description: Entity Tag
+              schema:
+                type: string
+        415:
+          description: Not supported
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+  /admin/v0/translation-imports/{translationImportId}:
+    get:
+      summary: Retrieve translation import by ID
+      tags:
+        - Translations
+        - Translation Imports
+      description: Returns details of a specific translation import by its ID
+      operationId: adminV0TranslationImportGet
+      parameters:
+        - name: translationImportId
+          in: path
+          description: The translation import identifier
+          required: true
+          schema:
+            type: string
+        - name: expand
+          in: query
+          description: Comma-separated list of related entities to include in the response
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: Translation import details
+          headers:
+            ETag:
+              description: Entity Tag
+              schema:
+                type: string
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranslationImport'
+        304:
+          description: Not modified
+        400:
+          description: Invalid request
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        406:
+          description: Not acceptable
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        409:
+          description: Request conflict with current state of the server
+        412:
+          description: Precondition failed
+          headers:
+            ETag:
+              description: Entity Tag
+              schema:
+                type: string
+        415:
+          description: Not supported
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+    delete:
+      summary: Delete translation import
+      tags:
+        - Translations
+        - Translation Imports
+      description: Deletes the translation import
+      operationId: adminV0TranslationImportDelete
+      parameters:
+        - name: translationImportId
+          in: path
+          description: The translation import identifier
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Successfully deleted the translation import
+        400:
+          description: Invalid request
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        406:
+          description: Not acceptable
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        409:
+          description: Request conflict with current state of the server
+        412:
+          description: Precondition failed
+          headers:
+            ETag:
+              description: Entity Tag
+              schema:
+                type: string
+        415:
+          description: Not supported
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+  /admin/v0/translation-imports/{translationImportId}/changes:
+    get:
+      summary: List translation changes
+      tags:
+        - Translations
+        - Translation Imports
+        - Translation Changes
+      description: Retrieves all translation changes for a specific translation import
+      operationId: adminV0TranslationImportChangesGet
+      parameters:
+        - name: translationImportId
+          in: path
+          description: The translation import identifier
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: The maximum number of translation changes to retrieve
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: offset
+          in: query
+          description: The number of translation changes to skip before starting to collect the result set
+          required: false
+          schema:
+            type: integer 
+            format: int32
+            default: 0
+            minimum: 0
+        - name: expand
+          in: query
+          description: Comma-separated list of related entities to include in the response
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: A list of translation changes
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranslationChangeList'
+        400:
+          description: Invalid request
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+  /admin/v0/translation-imports/{translationImportId}/changes/translation-categories:
+    get:
+      summary: List translation categories from changes
+      tags:
+        - Translations
+        - Translation Imports
+        - Translation Categories
+      description: Retrieves all translation categories affected by changes in a specific translation import
+      operationId: adminV0TranslationImportChangesTranslationCategoriesGet
+      parameters:
+        - name: translationImportId
+          in: path
+          description: The translation import identifier
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: The maximum number of translation categories to retrieve
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: offset
+          in: query
+          description: The number of translation categories to skip before starting to collect the result set
+          required: false
+          schema:
+            type: integer 
+            format: int32
+            default: 0
+            minimum: 0
+      responses:
+        200:
+          description: A list of translation categories
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranslationCategoryList'
+        400:
+          description: Invalid request
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+  /admin/v0/translation-imports/{translationImportId}/changes/{translationChangeId}:
+    get:
+      summary: Retrieve translation change by ID
+      tags:
+        - Translations
+        - Translation Imports
+        - Translation Changes
+      description: Returns details of a specific translation change by its ID
+      operationId: adminV0TranslationImportChangeGet
+      parameters:
+        - name: translationImportId
+          in: path
+          description: The translation import identifier
+          required: true
+          schema:
+            type: string
+        - name: translationChangeId
+          in: path
+          description: The translation change identifier
+          required: true
+          schema:
+            type: string
+        - name: expand
+          in: query
+          description: Comma-separated list of related entities to include in the response
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: Translation change details
+          headers:
+            ETag:
+              description: Entity Tag
+              schema:
+                type: string
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranslationChange'
+        304:
+          description: Not modified
+        400:
+          description: Invalid request
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+  /admin/v0/translation-imports/{translationImportId}/commit:
+    post:
+      summary: Commit translation import
+      tags:
+        - Translations
+        - Translation Imports
+      description: Commits all changes from a translation import to make them live
+      operationId: adminV0TranslationImportCommitPost
+      parameters:
+        - name: translationImportId
+          in: path
+          description: The translation import identifier
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Translation import successfully committed
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranslationImport'
+        400:
+          description: Invalid request
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+        409:
+          description: Request conflict with current state of the server
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+  /admin/v0/translation-imports/{translationImportId}/translation-locales:
+    get:
+      summary: List translation locales
+      tags:
+        - Translations
+        - Translation Imports
+        - Translation Locales
+      description: Retrieves all translation locales for a specific translation import
+      operationId: adminV0TranslationImportTranslationLocalesGet
+      parameters:
+        - name: translationImportId
+          in: path
+          description: The translation import identifier
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: The maximum number of translation locales to retrieve
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: offset
+          in: query
+          description: The number of translation locales to skip before starting to collect the result set
+          required: false
+          schema:
+            type: integer 
+            format: int32
+            default: 0
+            minimum: 0
+        - name: expand
+          in: query
+          description: Comma-separated list of related entities to include in the response
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: A list of translation locales
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranslationLocaleList'
+        400:
+          description: Invalid request
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+  /admin/v0/translation-imports/{translationImportId}/translation-locales/{translationLocaleRefId}:
+    get:
+      summary: Retrieve translation locale by reference ID
+      tags:
+        - Translations
+        - Translation Imports
+        - Translation Locales
+      description: Returns details of a specific translation locale by its reference ID
+      operationId: adminV0TranslationImportTranslationLocaleGet
+      parameters:
+        - name: translationImportId
+          in: path
+          description: The translation import identifier
+          required: true
+          schema:
+            type: string
+        - name: translationLocaleRefId
+          in: path
+          description: The translation locale reference identifier
+          required: true
+          schema:
+            type: string
+        - name: expand
+          in: query
+          description: Comma-separated list of related entities to include in the response
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: Translation locale details
+          headers:
+            ETag:
+              description: Entity Tag
+              schema:
+                type: string
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranslationLocale'
+        304:
+          description: Not modified
+        400:
+          description: Invalid request
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+  /admin/v0/translation-imports/{translationImportId}/translation-tags:
+    get:
+      summary: List translation tags
+      tags:
+        - Translations
+        - Translation Imports
+        - Translation Tags
+      description: Retrieves all translation tags for a specific translation import
+      operationId: adminV0TranslationImportTranslationTagsGet
+      parameters:
+        - name: translationImportId
+          in: path
+          description: The translation import identifier
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: The maximum number of translation tags to retrieve
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: offset
+          in: query
+          description: The number of translation tags to skip before starting to collect the result set
+          required: false
+          schema:
+            type: integer 
+            format: int32
+            default: 0
+            minimum: 0
+        - name: expand
+          in: query
+          description: Comma-separated list of related entities to include in the response
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: A list of translation tags
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranslationTagList'
+        400:
+          description: Invalid request
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+  /admin/v0/translation-imports/{translationImportId}/translation-tags/{translationTagRefId}:
+    get:
+      summary: Retrieve translation tag by reference ID
+      tags:
+        - Translations
+        - Translation Imports
+        - Translation Tags
+      description: Returns details of a specific translation tag by its reference ID
+      operationId: adminV0TranslationImportTranslationTagGet
+      parameters:
+        - name: translationImportId
+          in: path
+          description: The translation import identifier
+          required: true
+          schema:
+            type: string
+        - name: translationTagRefId
+          in: path
+          description: The translation tag reference identifier
+          required: true
+          schema:
+            type: string
+        - name: expand
+          in: query
+          description: Comma-separated list of related entities to include in the response
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: Translation tag details
+          headers:
+            ETag:
+              description: Entity Tag
+              schema:
+                type: string
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranslationTag'
+        304:
+          description: Not modified
+        400:
+          description: Invalid request
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+components:
+  headers:
+    X-RateLimit-Limit-day:
+      description: The number of requests allowed in total in a 24-hour period. Deprecated as of Sept. 2022 in favor of X-RateLimit-Limit.
+      schema:
+        type: integer
+      example: 10000
+      deprecated: true
+    X-RateLimit-Remaining-day:
+      description: The number of requests available to make in a 24-hour period. Deprecated as of Sept. 2022 in favor of X-RateLimit-Remaining.
+      schema:
+        type: integer
+      example: 10000
+      deprecated: true
+    X-RateLimit-Limit-second:
+      description: The number of requests allowed in total in a 1-second period. Deprecated as of Sept. 2022 in favor of X-RateLimit-Limit.
+      schema:
+        type: integer
+      example: 10
+      deprecated: true
+    X-RateLimit-Remaining-second:
+      description: The number of requests available to make in a 1-second period. Deprecated as of Sept. 2022 in favor of X-RateLimit-Remaining.
+      schema:
+        type: integer
+      example: 10
+      deprecated: true
+    X-RateLimit-Limit:
+      description:
+        Indicates the request quota closest to reaching its limit
+        amongst all available quotas. Follows the semantics of
+        [IETF draft-polli-ratelimit-headers](https://datatracker.ietf.org/doc/html/draft-polli-ratelimit-headers).
+      schema:
+        type: string
+      example: 10, 10;w=1, 100;w=86400
+    X-RateLimit-Remaining:
+      description:
+        Indicates the number of requests remaining in the quota that is
+        closest to expiring (as indicated by `X-RateLimit-Limit`).
+        Follows the semantics of
+        [IETF draft-polli-ratelimit-headers](https://datatracker.ietf.org/doc/html/draft-polli-ratelimit-headers).
+      schema:
+        type: integer
+      example: 10
+    X-RateLimit-Reset:
+      description:
+        Indicates the number of seconds remaining until the quota
+        resets.  Follows the semantics of
+        [IETF draft-polli-ratelimit-headers](https://datatracker.ietf.org/doc/html/draft-polli-ratelimit-headers).
+      schema:
+        type: integer
+      example: 10
+    X-Medallia-Rpc-Request-Id:
+      description: The request ID, used by Medallia support for troubleshooting
+      schema:
+        type: string
+        format: identifier
+      example: 94615edd-d9d0-4921-8b3e-60615b3d3431
+  schemas:
+    TranslationExportList:
+      type: object
+      description: Collection of translation export objects
+      properties:
+        items:
+          type: array
+          description: The list of translation exports
+          items:
+            $ref: '#/components/schemas/TranslationExport'
+        _total:
+          type: integer
+          format: int32
+          description: Total number of translation exports available
+        _links:
+          type: object
+          description: Navigation links for pagination
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+            next:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+            prev:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+    TranslationExport:
+      type: object
+      description: A translation export object for exporting translations
+      properties:
+        id:
+          type: string
+          description: Translation export identifier
+          readOnly: true
+        name:
+          type: string
+          description: Name of the translation export
+          maxLength: 10240
+        description:
+          type: string
+          description: Description of the translation export
+          maxLength: 10240
+        status:
+          type: string
+          description: Status of the translation export
+          enum:
+            - pending
+            - running
+            - completed
+            - failed
+          readOnly: true
+        file_format:
+          type: string
+          description: Format of the generated file
+          enum:
+            - excel
+            - csv
+          default: excel
+        translation_tag_ids:
+          type: array
+          description: Translation tags for which this translation export is restricted to
+          items:
+            type: string
+        translation_locale_ids:
+          type: array
+          description: Translation locales for which this translation export is restricted to
+          items:
+            type: string
+        translation_statuses:
+          type: array
+          description: Translation statuses for which this translation export is restricted to
+          items:
+            type: string
+            enum:
+              - pending
+              - accepted
+              - changed
+              - inherited
+              - issue
+              - default_translation_available
+              - do_not_translate
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          readOnly: true
+        _links:
+          type: object
+          description: Related links for the translation export
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+            file:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+              description: Link to download the exported file
+    TranslationImportList:
+      type: object
+      description: Collection of translation import objects
+      properties:
+        items:
+          type: array
+          description: The list of translation imports
+          items:
+            $ref: '#/components/schemas/TranslationImport'
+        _total:
+          type: integer
+          format: int32
+          description: Total number of translation imports available
+        _links:
+          type: object
+          description: Navigation links for pagination
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+            next:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+            prev:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+    TranslationImport:
+      type: object
+      description: A translation import object for importing translations
+      properties:
+        id:
+          type: string
+          description: Translation import identifier
+          readOnly: true
+        name:
+          type: string
+          description: Name of the translation import
+          maxLength: 10240
+        description:
+          type: string
+          description: Description of the translation import
+          maxLength: 10240
+        status:
+          type: string
+          description: Status of the translation import
+          enum:
+            - pending
+            - running
+            - completed
+            - failed
+          readOnly: true
+        file_name:
+          type: string
+          description: Name of the imported file
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          readOnly: true
+        _links:
+          type: object
+          description: Related links for the translation import
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+    TranslationChange:
+      type: object
+      description: A translation change representing a modification to translation content
+      required:
+        - id
+        - change_type
+        - source_text
+        - target_text
+        - locale
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the translation change
+          readOnly: true
+        change_type:
+          type: string
+          description: Type of change made to the translation
+          enum:
+            - added
+            - modified
+            - removed
+          readOnly: true
+        source_text:
+          type: string
+          description: Original source text for translation
+          readOnly: true
+        target_text:
+          type: string
+          description: Translated target text
+          readOnly: true
+        locale:
+          type: string
+          description: Language locale for the translation change
+          readOnly: true
+        category:
+          type: string
+          description: Translation category
+          readOnly: true
+        status:
+          type: string
+          description: Status of the translation change
+          enum:
+            - pending
+            - approved
+            - rejected
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          readOnly: true
+        _links:
+          type: object
+          description: Related links for the translation change
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+    TranslationChangeList:
+      type: object
+      description: A paginated list of translation changes
+      required:
+        - items
+        - total_count
+      properties:
+        items:
+          type: array
+          description: Array of translation changes
+          items:
+            $ref: '#/components/schemas/TranslationChange'
+        total_count:
+          type: integer
+          description: Total number of translation changes available
+          readOnly: true
+        offset:
+          type: integer
+          description: Number of items skipped
+          readOnly: true
+        limit:
+          type: integer
+          description: Maximum number of items returned
+          readOnly: true
+        _links:
+          type: object
+          description: Navigation links for pagination
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+            next:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+            prev:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+    TranslationCategory:
+      type: object
+      description: A translation category for organizing translation content
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the translation category
+          readOnly: true
+        name:
+          type: string
+          description: Name of the translation category
+          readOnly: true
+        description:
+          type: string
+          description: Description of the translation category
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          readOnly: true
+        _links:
+          type: object
+          description: Related links for the translation category
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+    TranslationCategoryList:
+      type: object
+      description: A paginated list of translation categories
+      required:
+        - items
+        - total_count
+      properties:
+        items:
+          type: array
+          description: Array of translation categories
+          items:
+            $ref: '#/components/schemas/TranslationCategory'
+        total_count:
+          type: integer
+          description: Total number of translation categories available
+          readOnly: true
+        offset:
+          type: integer
+          description: Number of items skipped
+          readOnly: true
+        limit:
+          type: integer
+          description: Maximum number of items returned
+          readOnly: true
+        _links:
+          type: object
+          description: Navigation links for pagination
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+            next:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+            prev:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+    TranslationLocale:
+      type: object
+      description: A translation locale representing a specific language/region combination
+      required:
+        - ref_id
+        - code
+        - name
+      properties:
+        ref_id:
+          type: string
+          description: Reference identifier for the translation locale
+          readOnly: true
+        code:
+          type: string
+          description: Language/locale code (e.g., en-US, fr-FR)
+          readOnly: true
+        name:
+          type: string
+          description: Human-readable name of the locale
+          readOnly: true
+        direction:
+          type: string
+          description: Text direction for the locale
+          enum:
+            - ltr
+            - rtl
+          readOnly: true
+        is_active:
+          type: boolean
+          description: Whether the locale is currently active
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          readOnly: true
+        _links:
+          type: object
+          description: Related links for the translation locale
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+    TranslationLocaleList:
+      type: object
+      description: A paginated list of translation locales
+      required:
+        - items
+        - total_count
+      properties:
+        items:
+          type: array
+          description: Array of translation locales
+          items:
+            $ref: '#/components/schemas/TranslationLocale'
+        total_count:
+          type: integer
+          description: Total number of translation locales available
+          readOnly: true
+        offset:
+          type: integer
+          description: Number of items skipped
+          readOnly: true
+        limit:
+          type: integer
+          description: Maximum number of items returned
+          readOnly: true
+        _links:
+          type: object
+          description: Navigation links for pagination
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+            next:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+            prev:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+    TranslationTag:
+      type: object
+      description: A translation tag for labeling and organizing translation content
+      required:
+        - ref_id
+        - name
+      properties:
+        ref_id:
+          type: string
+          description: Reference identifier for the translation tag
+          readOnly: true
+        name:
+          type: string
+          description: Name of the translation tag
+          readOnly: true
+        description:
+          type: string
+          description: Description of the translation tag
+          readOnly: true
+        color:
+          type: string
+          description: Display color for the tag (hex code)
+          pattern: '^#[0-9A-Fa-f]{6}$'
+          readOnly: true
+        is_active:
+          type: boolean
+          description: Whether the tag is currently active
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          readOnly: true
+        _links:
+          type: object
+          description: Related links for the translation tag
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+    TranslationTagList:
+      type: object
+      description: A paginated list of translation tags
+      required:
+        - items
+        - total_count
+      properties:
+        items:
+          type: array
+          description: Array of translation tags
+          items:
+            $ref: '#/components/schemas/TranslationTag'
+        total_count:
+          type: integer
+          description: Total number of translation tags available
+          readOnly: true
+        offset:
+          type: integer
+          description: Number of items skipped
+          readOnly: true
+        limit:
+          type: integer
+          description: Maximum number of items returned
+          readOnly: true
+        _links:
+          type: object
+          description: Navigation links for pagination
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+            next:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+            prev:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+  securitySchemes:
+    mecOauth:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{reporting-hostname}/oauth/{company}/token
+          scopes: {}
+security:
+  - mecOauth: []
