@@ -161,7 +161,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       security:
         - mecOauth: []
-  /admin/v0/translation-exports/{translationExportId}:
+  /admin/v0/translation-exports/{translation-export-id}:
     get:
       summary: Retrieve translation export by ID
       tags:
@@ -170,7 +170,7 @@ paths:
       description: Returns details of a specific translation export by its ID
       operationId: adminV0TranslationExportGet
       parameters:
-        - name: translationExportId
+        - name: translation-export-id
           in: path
           description: The translation export identifier
           required: true
@@ -240,7 +240,7 @@ paths:
       description: Deletes the translation export
       operationId: adminV0TranslationExportDelete
       parameters:
-        - name: translationExportId
+        - name: translation-export-id
           in: path
           description: The translation export identifier
           required: true
@@ -269,7 +269,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       security:
         - mecOauth: []
-  /admin/v0/translation-exports/{translationExportId}/file:
+  /admin/v0/translation-exports/{translation-export-id}/file:
     get:
       summary: Download translation export file
       tags:
@@ -278,7 +278,7 @@ paths:
       description: Gets the exported file for the given translation export
       operationId: adminV0TranslationExportFileGet
       parameters:
-        - name: translationExportId
+        - name: translation-export-id
           in: path
           description: The translation export identifier
           required: true
@@ -490,7 +490,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       security:
         - mecOauth: []
-  /admin/v0/translation-imports/{translationImportId}:
+  /admin/v0/translation-imports/{translation-import-id}:
     get:
       summary: Retrieve translation import by ID
       tags:
@@ -499,7 +499,7 @@ paths:
       description: Returns details of a specific translation import by its ID
       operationId: adminV0TranslationImportGet
       parameters:
-        - name: translationImportId
+        - name: translation-import-id
           in: path
           description: The translation import identifier
           required: true
@@ -569,7 +569,7 @@ paths:
       description: Deletes the translation import
       operationId: adminV0TranslationImportDelete
       parameters:
-        - name: translationImportId
+        - name: translation-import-id
           in: path
           description: The translation import identifier
           required: true
@@ -598,7 +598,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       security:
         - mecOauth: []
-  /admin/v0/translation-imports/{translationImportId}/changes:
+  /admin/v0/translation-imports/{translation-import-id}/changes:
     get:
       summary: List translation changes
       tags:
@@ -607,7 +607,7 @@ paths:
       description: Retrieves all translation changes for a specific translation import
       operationId: adminV0TranslationImportChangesGet
       parameters:
-        - name: translationImportId
+        - name: translation-import-id
           in: path
           description: The translation import identifier
           required: true
@@ -674,7 +674,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       security:
         - mecOauth: []
-  /admin/v0/translation-imports/{translationImportId}/changes/translation-categories:
+  /admin/v0/translation-imports/{translation-import-id}/changes/translation-categories:
     get:
       summary: List translation categories from changes
       tags:
@@ -683,7 +683,7 @@ paths:
       description: Retrieves all translation categories affected by changes in a specific translation import
       operationId: adminV0TranslationImportChangesTranslationCategoriesGet
       parameters:
-        - name: translationImportId
+        - name: translation-import-id
           in: path
           description: The translation import identifier
           required: true
@@ -744,7 +744,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       security:
         - mecOauth: []
-  /admin/v0/translation-imports/{translationImportId}/changes/{translationChangeId}:
+  /admin/v0/translation-imports/{translation-import-id}/changes/{translation-change-id}:
     get:
       summary: Retrieve translation change by ID
       tags:
@@ -753,13 +753,13 @@ paths:
       description: Returns details of a specific translation change by its ID
       operationId: adminV0TranslationImportChangeGet
       parameters:
-        - name: translationImportId
+        - name: translation-import-id
           in: path
           description: The translation import identifier
           required: true
           schema:
             type: string
-        - name: translationChangeId
+        - name: translation-change-id
           in: path
           description: The translation change identifier
           required: true
@@ -813,7 +813,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       security:
         - mecOauth: []
-  /admin/v0/translation-imports/{translationImportId}/commit:
+  /admin/v0/translation-imports/{translation-import-id}/commit:
     post:
       summary: Commit translation import
       tags:
@@ -822,7 +822,7 @@ paths:
       description: Commits all changes from a translation import to make them live
       operationId: adminV0TranslationImportCommitPost
       parameters:
-        - name: translationImportId
+        - name: translation-import-id
           in: path
           description: The translation import identifier
           required: true
@@ -866,7 +866,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       security:
         - mecOauth: []
-  /admin/v0/translation-imports/{translationImportId}/translation-locales:
+  /admin/v0/translation-imports/{translation-import-id}/translation-locales:
     get:
       summary: List translation locales
       tags:
@@ -875,7 +875,7 @@ paths:
       description: Retrieves all translation locales for a specific translation import
       operationId: adminV0TranslationImportTranslationLocalesGet
       parameters:
-        - name: translationImportId
+        - name: translation-import-id
           in: path
           description: The translation import identifier
           required: true
@@ -942,7 +942,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       security:
         - mecOauth: []
-  /admin/v0/translation-imports/{translationImportId}/translation-locales/{translationLocaleRefId}:
+  /admin/v0/translation-imports/{translation-import-id}/translation-locales/{translation-locale-ref-id}:
     get:
       summary: Retrieve translation locale by reference ID
       tags:
@@ -951,13 +951,13 @@ paths:
       description: Returns details of a specific translation locale by its reference ID
       operationId: adminV0TranslationImportTranslationLocaleGet
       parameters:
-        - name: translationImportId
+        - name: translation-import-id
           in: path
           description: The translation import identifier
           required: true
           schema:
             type: string
-        - name: translationLocaleRefId
+        - name: translation-locale-ref-id
           in: path
           description: The translation locale reference identifier
           required: true
@@ -1011,7 +1011,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       security:
         - mecOauth: []
-  /admin/v0/translation-imports/{translationImportId}/translation-tags:
+  /admin/v0/translation-imports/{translation-import-id}/translation-tags:
     get:
       summary: List translation tags
       tags:
@@ -1020,7 +1020,7 @@ paths:
       description: Retrieves all translation tags for a specific translation import
       operationId: adminV0TranslationImportTranslationTagsGet
       parameters:
-        - name: translationImportId
+        - name: translation-import-id
           in: path
           description: The translation import identifier
           required: true
@@ -1087,7 +1087,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       security:
         - mecOauth: []
-  /admin/v0/translation-imports/{translationImportId}/translation-tags/{translationTagRefId}:
+  /admin/v0/translation-imports/{translation-import-id}/translation-tags/{translation-tag-ref-id}:
     get:
       summary: Retrieve translation tag by reference ID
       tags:
@@ -1096,13 +1096,13 @@ paths:
       description: Returns details of a specific translation tag by its reference ID
       operationId: adminV0TranslationImportTranslationTagGet
       parameters:
-        - name: translationImportId
+        - name: translation-import-id
           in: path
           description: The translation import identifier
           required: true
           schema:
             type: string
-        - name: translationTagRefId
+        - name: translation-tag-ref-id
           in: path
           description: The translation tag reference identifier
           required: true

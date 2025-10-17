@@ -98,7 +98,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       security:
         - mecOauth: []
-  /admin/v0/surveys/{surveyId}:
+  /admin/v0/surveys/{survey-id}:
     get:
       summary: Retrieve survey by ID
       tags:
@@ -106,7 +106,7 @@ paths:
       description: Returns details of a specific survey by its ID
       operationId: adminV0SurveyGet
       parameters:
-        - name: surveyId
+        - name: survey-id
           in: path
           description: The survey identifier
           required: true
@@ -225,7 +225,7 @@ paths:
           description: Internal server error
       security:
         - mecOauth: []
-  /admin/v0/surveys/{surveyId}/flat-view:
+  /admin/v0/surveys/{survey-id}/flat-view:
     get:
       summary: Retrieve survey flat view
       tags:
@@ -233,7 +233,7 @@ paths:
       description: Returns the flat view of the latest blueprint for the selected survey
       operationId: adminV0SurveyFlatViewGet
       parameters:
-        - name: surveyId
+        - name: survey-id
           in: path
           description: The survey identifier
           required: true
