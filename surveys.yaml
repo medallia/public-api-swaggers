@@ -1,0 +1,1035 @@
+openapi: 3.0.0
+info:
+  title: Surveys API
+  version: 1.0.0
+  description:
+    The Medallia Surveys API enables retrieval of survey program specification data
+    within Medallia Experience Cloud.
+  termsOfService: https://medallia.com/about/legal/terms/api
+servers:
+  - url: 'https://{api-gateway-hostname}'
+    variables:
+      api-gateway-hostname:
+        default: instance-tenant.apis.medallia.com
+        description:
+          The Medallia Experience Cloud hostname used to access
+          Medallia Reporting
+paths:
+  /admin/v0/surveys:
+    get:
+      summary: List surveys
+      tags:
+        - Surveys
+      description: Retrieves a list of surveys
+      operationId: adminV0SurveysGet
+      parameters:
+        - name: limit
+          in: query
+          description: The maximum number of surveys to retrieve
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: offset
+          in: query
+          description: The number of surveys to skip before starting to collect the result set
+          required: false
+          schema:
+            type: integer 
+            format: int32
+            default: 0
+            minimum: 0
+        - name: q
+          in: query
+          description: A search term to filter surveys by name (case-insensitive, partial match)
+          required: false
+          schema:
+            type: string
+        - name: expand
+          in: query
+          description: Comma-separated list of related entities to include in the response
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: A list of surveys
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SurveyList'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        404:
+          $ref: '#/components/responses/NotFound'
+        406:
+          $ref: '#/components/responses/NotAcceptable'
+        409:
+          $ref: '#/components/responses/RequestConflict'
+        412:
+          $ref: '#/components/responses/PreconditionFailed'
+        415:
+          $ref: '#/components/responses/NotSupported'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - mecOauth: []
+  /admin/v0/surveys/{survey-id}:
+    get:
+      summary: Retrieve survey by ID
+      tags:
+        - Surveys
+      description: Returns details of a specific survey by its ID
+      operationId: adminV0SurveyGet
+      parameters:
+        - name: survey-id
+          in: path
+          description: The survey identifier
+          required: true
+          schema:
+            type: string
+            format: identifier
+        - name: expand
+          in: query
+          description: Comma-separated list of related entities to include in the response
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: Survey details
+          headers:
+            ETag:
+              description: Entity Tag
+              schema:
+                type: string
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Survey'
+        304:
+          description: Not modified
+        400:
+          description: Invalid request
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        401:
+          description: Unauthorized
+        403:
+          description: Forbidden
+        404:
+          description: Object not found
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        406:
+          description: Not acceptable
+          headers:
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+        409:
+          description: Request conflict with current state of the server
+        412:
+          description: Precondition failed
+          headers:
+            ETag:
+              description: Entity Tag
+              schema:
+                type: string
+        415:
+          description: Not supported
+        500:
+          description: Internal server error
+      security:
+        - mecOauth: []
+  /admin/v0/surveys/{survey-id}/flat-view:
+    get:
+      summary: Retrieve survey flat view
+      tags:
+        - Surveys
+      description: Returns the flat view of the latest blueprint for the selected survey
+      operationId: adminV0SurveyFlatViewGet
+      parameters:
+        - name: survey-id
+          in: path
+          description: The survey identifier
+          required: true
+          schema:
+            type: string
+            format: identifier
+        - name: expand
+          in: query
+          description: Comma-separated list of related entities to include in the response
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: The flat view of the latest blueprint for the selected survey
+          headers:
+            ETag:
+              description: Entity Tag
+              schema:
+                type: string
+            X-RateLimit-Limit-day:
+              $ref: '#/components/headers/X-RateLimit-Limit-day'
+            X-RateLimit-Remaining-day:
+              $ref: '#/components/headers/X-RateLimit-Remaining-day'
+            X-RateLimit-Limit-second:
+              $ref: '#/components/headers/X-RateLimit-Limit-second'
+            X-RateLimit-Remaining-second:
+              $ref: '#/components/headers/X-RateLimit-Remaining-second'
+            X-RateLimit-Limit:
+              $ref: '#/components/headers/X-RateLimit-Limit'
+            X-RateLimit-Remaining:
+              $ref: '#/components/headers/X-RateLimit-Remaining'
+            X-RateLimit-Reset:
+              $ref: '#/components/headers/X-RateLimit-Reset'
+            X-Medallia-Rpc-Request-Id:
+              $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlatView'
+        304:
+          $ref: '#/components/responses/NotModified'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        404:
+          $ref: '#/components/responses/NotFound'
+        406:
+          $ref: '#/components/responses/NotAcceptable'
+        409:
+          $ref: '#/components/responses/RequestConflict'
+        412:
+          $ref: '#/components/responses/PreconditionFailed'
+        415:
+          $ref: '#/components/responses/NotSupported'
+        500:
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - mecOauth: []
+components:
+  headers:
+    X-RateLimit-Limit-day:
+      description: The number of requests allowed in total in a 24-hour period. Deprecated as of Sept. 2022 in favor of X-RateLimit-Limit.
+      schema:
+        type: integer
+      example: 10000
+      deprecated: true
+    X-RateLimit-Remaining-day:
+      description: The number of requests available to make in a 24-hour period. Deprecated as of Sept. 2022 in favor of X-RateLimit-Remaining.
+      schema:
+        type: integer
+      example: 10000
+      deprecated: true
+    X-RateLimit-Limit-second:
+      description: The number of requests allowed in total in a 1-second period. Deprecated as of Sept. 2022 in favor of X-RateLimit-Limit.
+      schema:
+        type: integer
+      example: 10
+      deprecated: true
+    X-RateLimit-Remaining-second:
+      description: The number of requests available to make in a 1-second period. Deprecated as of Sept. 2022 in favor of X-RateLimit-Remaining.
+      schema:
+        type: integer
+      example: 10
+      deprecated: true
+    X-RateLimit-Limit:
+      description:
+        Indicates the request quota closest to reaching its limit
+        amongst all available quotas. Follows the semantics of
+        [IETF draft-polli-ratelimit-headers](https://datatracker.ietf.org/doc/html/draft-polli-ratelimit-headers).
+      schema:
+        type: string
+      example: 10, 10;w=1, 100;w=86400
+    X-RateLimit-Remaining:
+      description:
+        Indicates the number of requests remaining in the quota that is
+        closest to expiring (as indicated by `X-RateLimit-Limit`).
+        Follows the semantics of
+        [IETF draft-polli-ratelimit-headers](https://datatracker.ietf.org/doc/html/draft-polli-ratelimit-headers).
+      schema:
+        type: integer
+      example: 10
+    X-RateLimit-Reset:
+      description:
+        Indicates the number of seconds remaining until the quota
+        resets.  Follows the semantics of
+        [IETF draft-polli-ratelimit-headers](https://datatracker.ietf.org/doc/html/draft-polli-ratelimit-headers).
+      schema:
+        type: integer
+      example: 10
+    X-Medallia-Rpc-Request-Id:
+      description: The request ID, used by Medallia support for troubleshooting
+      schema:
+        type: string
+        format: identifier
+      example: 94615edd-d9d0-4921-8b3e-60615b3d3431
+  responses:
+    BadRequest:
+      description: Invalid request
+      headers:
+        X-RateLimit-Limit-day:
+          $ref: '#/components/headers/X-RateLimit-Limit-day'
+        X-RateLimit-Remaining-day:
+          $ref: '#/components/headers/X-RateLimit-Remaining-day'
+        X-RateLimit-Limit-second:
+          $ref: '#/components/headers/X-RateLimit-Limit-second'
+        X-RateLimit-Remaining-second:
+          $ref: '#/components/headers/X-RateLimit-Remaining-second'
+        X-RateLimit-Limit:
+          $ref: '#/components/headers/X-RateLimit-Limit'
+        X-RateLimit-Remaining:
+          $ref: '#/components/headers/X-RateLimit-Remaining'
+        X-RateLimit-Reset:
+          $ref: '#/components/headers/X-RateLimit-Reset'
+        X-Medallia-Rpc-Request-Id:
+          $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+    Unauthorized:
+      description: Unauthorized
+    Forbidden:
+      description: Forbidden
+    NotFound:
+      description: Object not found
+      headers:
+        X-RateLimit-Limit-day:
+          $ref: '#/components/headers/X-RateLimit-Limit-day'
+        X-RateLimit-Remaining-day:
+          $ref: '#/components/headers/X-RateLimit-Remaining-day'
+        X-RateLimit-Limit-second:
+          $ref: '#/components/headers/X-RateLimit-Limit-second'
+        X-RateLimit-Remaining-second:
+          $ref: '#/components/headers/X-RateLimit-Remaining-second'
+        X-RateLimit-Limit:
+          $ref: '#/components/headers/X-RateLimit-Limit'
+        X-RateLimit-Remaining:
+          $ref: '#/components/headers/X-RateLimit-Remaining'
+        X-RateLimit-Reset:
+          $ref: '#/components/headers/X-RateLimit-Reset'
+        X-Medallia-Rpc-Request-Id:
+          $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+    NotAcceptable:
+      description: Not acceptable
+      headers:
+        X-RateLimit-Limit-day:
+          $ref: '#/components/headers/X-RateLimit-Limit-day'
+        X-RateLimit-Remaining-day:
+          $ref: '#/components/headers/X-RateLimit-Remaining-day'
+        X-RateLimit-Limit-second:
+          $ref: '#/components/headers/X-RateLimit-Limit-second'
+        X-RateLimit-Remaining-second:
+          $ref: '#/components/headers/X-RateLimit-Remaining-second'
+        X-RateLimit-Limit:
+          $ref: '#/components/headers/X-RateLimit-Limit'
+        X-RateLimit-Remaining:
+          $ref: '#/components/headers/X-RateLimit-Remaining'
+        X-RateLimit-Reset:
+          $ref: '#/components/headers/X-RateLimit-Reset'
+        X-Medallia-Rpc-Request-Id:
+          $ref: '#/components/headers/X-Medallia-Rpc-Request-Id'
+    RequestConflict:
+      description: Request conflict with current state of the server
+    PreconditionFailed:
+      description: Precondition failed
+      headers:
+        ETag:
+          description: Entity Tag
+          schema:
+            type: string
+    NotSupported:
+      description: Not supported
+    InternalServerError:
+      description: Internal server error
+    NotModified:
+      description: Not modified
+  schemas:
+    SurveyList:
+      type: object
+      description: A collection of surveys
+      properties:
+        items:
+          type: array
+          description: The list of surveys
+          items:
+            $ref: '#/components/schemas/Survey'
+        _total:
+          type: integer
+          format: int32
+          description: Total number of surveys available
+        _links:
+          type: object
+          description: Navigation links for pagination
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+            next:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+            prev:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+    Survey:
+      type: object
+      description: A minimal public survey object
+      properties:
+        id:
+          type: string
+          description: Survey identifier
+          maxLength: 10240
+        translation_tag_id:
+          type: string
+          description: Translation tag identifier
+          maxLength: 10240
+        name:
+          type: string
+          description: Survey name
+          maxLength: 10240
+        _links:
+          type: object
+          description: Related links for the survey
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+            flat_view:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+              description: The flat view of the latest blueprint for the selected survey
+    FlatView:
+      type: object
+      description: A survey's flat view comprised of all the components included in the survey, along with all the fields and alternative sets used by those components
+      properties:
+        survey_model:
+          type: array
+          description: List of components that make up the survey
+          items:
+            $ref: '#/components/schemas/Component'
+        question_fields:
+          type: array
+          description: Question fields used in the survey
+          items:
+            $ref: '#/components/schemas/QuestionField'
+        composite_fields:
+          type: array
+          description: Composite fields used in the survey
+          items:
+            $ref: '#/components/schemas/CompositeField'
+        episode_fields:
+          type: array
+          description: Episode fields used in the survey
+          items:
+            $ref: '#/components/schemas/EpisodeField'
+        unit_fields:
+          type: array
+          description: Unit fields used in the survey
+          items:
+            $ref: '#/components/schemas/UnitField'
+        unit_group_fields:
+          type: array
+          description: Unit group fields used in the survey
+          items:
+            $ref: '#/components/schemas/UnitGroupField'
+        alternative_sets:
+          type: array
+          description: Alternative sets used in the survey
+          items:
+            $ref: '#/components/schemas/AlternativeSet'
+        _links:
+          type: object
+          description: Related links
+          properties:
+            self:
+              type: object
+              properties:
+                href:
+                  type: string
+                  format: uri
+    Component:
+      type: object
+      description: An element of a survey, encapsulating valid content for a survey model definition
+      discriminator:
+        propertyName: type
+      properties:
+        id:
+          type: string
+          format: identifier
+          description: The identifier for this entity
+          readOnly: true
+          maxLength: 10240
+        position:
+          type: integer
+          format: int32
+          description: Position of the component in the unfiltered collection, indexed from 0
+        type:
+          type: string
+          description: The type of this component
+          enum:
+            - section
+            - cookie-confirmation
+            - trip-advisor
+            - trip-advisor-external-widget
+            - end-section
+            - text
+            - image
+            - grid
+            - date-picker
+            - media-question
+            - file-upload-question
+            - matrix-question
+            - multilevel-selector
+            - selector
+            - hidden-input
+            - hidden-validation
+            - ask-now
+            - multifield-selector
+            - multivalue-selector
+            - spacer
+            - html
+            - question
+            - one-time-auth-code
+            - bazaarvoice
+            - incorrect-recipient-notice
+            - remote-api-call
+            - ranking-question
+        name:
+          type: string
+          description: Arbitrary user-assigned name for this component
+          maxLength: 10240
+        description:
+          type: string
+          description: Arbitrary user-assigned description for this component
+          maxLength: 10240
+        precondition_script:
+          type: string
+          description: Survey condition checked during survey-taking, to determine whether to show this component
+          maxLength: 10240
+        translation_keys:
+          type: array
+          description: List of translation keys used by this component
+          items:
+            $ref: '#/components/schemas/TextTranslationKey'
+      required:
+        - type
+    TextTranslationKey:
+      type: object
+      description: A key-value pair for translatable text
+      properties:
+        translation-key:
+          type: string
+          description: The translation key
+          maxLength: 10240
+        text:
+          type: string
+          description: The translatable text
+          maxLength: 10240
+      required:
+        - text
+    QuestionField:
+      type: object
+      description: The Question Field
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the field
+          readOnly: true
+          maxLength: 10240
+        uuid:
+          type: string
+          description: UUID of the field
+          maxLength: 10240
+        key:
+          type: string
+          description: Unique identifier that is user facing
+          maxLength: 10240
+        name:
+          type: string
+          description: The name of the field
+          maxLength: 10240
+        field_type:
+          type: string
+          description: The type of field
+          readOnly: true
+          enum:
+            - question-field
+        data_type:
+          type: string
+          description: The data type of the field
+          enum:
+            - alternative_set
+            - dynamic_alternative_set
+            - javaenum
+            - autoindex_text
+            - unit
+            - unit_group
+            - fractional
+            - integer
+            - short_int
+            - real_number
+            - survey_spec
+            - string
+            - no_data
+        short_name:
+          type: string
+          description: The text value that appears in column headings on Ranker report
+          maxLength: 10240
+        abbreviation:
+          type: string
+          description: The text value that appears in the column heading in Response List report
+          maxLength: 10240
+        in_survey:
+          type: string
+          description: The full text version of the question which the survey will use by default
+          maxLength: 10240
+        in_mobile_survey:
+          type: string
+          description: The full text version of the question which the survey will use by default in the mobile version
+          maxLength: 10240
+        user_text:
+          type: string
+          description: The text shown for a question with a reference to an Other Question
+          maxLength: 10240
+        priority:
+          type: integer
+          description: The priority of the field, used for sorting
+        description:
+          type: string
+          description: Description for the administrative user
+          maxLength: 10240
+        category:
+          type: string
+          description: The category of the question field
+          maxLength: 10240
+        export_label:
+          type: string
+          description: The label that can be used in the column headers in exports
+          maxLength: 10240
+        translation_explanation:
+          type: string
+          description: Text used to give instructions to the translator
+          maxLength: 10240
+        translation_key:
+          type: string
+          description: Key used for looking up translations for this field
+          readOnly: true
+          maxLength: 10240
+    CompositeField:
+      type: object
+      description: The Composite Field
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the field
+          readOnly: true
+          maxLength: 10240
+        uuid:
+          type: string
+          description: UUID of the field
+          maxLength: 10240
+        key:
+          type: string
+          description: Unique identifier that is user facing
+          maxLength: 10240
+        name:
+          type: string
+          description: The name of the field
+          maxLength: 10240
+        field_type:
+          type: string
+          description: The type of field
+          readOnly: true
+          enum:
+            - composite-field
+        short_name:
+          type: string
+          description: The text value that appears in column headings on Ranker report
+          maxLength: 10240
+        in_survey:
+          type: string
+          description: The full text version of the composite which the survey will use by default
+          maxLength: 10240
+        in_mobile_survey:
+          type: string
+          description: The full text version of the composite which the survey will use by default in the mobile version
+          maxLength: 10240
+        description:
+          type: string
+          description: Composite Field description
+          maxLength: 10240
+        type:
+          type: string
+          description: The type of Composite Field
+          enum:
+            - matrix
+            - ask_now
+        translation_key:
+          type: string
+          description: Key used for looking up translations for this field
+          readOnly: true
+          maxLength: 10240
+    EpisodeField:
+      type: object
+      description: The Record Field
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the field
+          readOnly: true
+          maxLength: 10240
+        uuid:
+          type: string
+          description: UUID of the field
+          maxLength: 10240
+        key:
+          type: string
+          description: Unique identifier that is user facing
+          maxLength: 10240
+        name:
+          type: string
+          description: The name of the field
+          maxLength: 10240
+        field_type:
+          type: string
+          description: The type of field
+          readOnly: true
+          enum:
+            - episode-field
+        short_name:
+          type: string
+          description: The text that appears in drop-down filters
+          maxLength: 10240
+        priority:
+          type: integer
+          description: The priority of the field, used for sorting
+        description:
+          type: string
+          description: Description for the administrative user
+          maxLength: 10240
+        export_label:
+          type: string
+          description: The label that can be used in the column headers in exports
+          maxLength: 10240
+        translation_explanation:
+          type: string
+          description: Text used to give instructions to the translator
+          maxLength: 10240
+        translation_key:
+          type: string
+          description: Key used for looking up translations for this field
+          readOnly: true
+          maxLength: 10240
+    UnitField:
+      type: object
+      description: The Unit Data Field
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the field
+          readOnly: true
+          maxLength: 10240
+        uuid:
+          type: string
+          description: UUID of the field
+          maxLength: 10240
+        key:
+          type: string
+          description: Unique identifier that is user facing
+          maxLength: 10240
+        name:
+          type: string
+          description: The name of the field
+          maxLength: 10240
+        field_type:
+          type: string
+          description: The type of field
+          readOnly: true
+          enum:
+            - unit-field
+        priority:
+          type: integer
+          description: The priority of the field, used for sorting
+        description:
+          type: string
+          description: Description for the administrative user
+          maxLength: 10240
+        translation_explanation:
+          type: string
+          description: Text used to give instructions to the translator
+          maxLength: 10240
+        translation_key:
+          type: string
+          description: Key used for looking up translations for this field
+          readOnly: true
+          maxLength: 10240
+    UnitGroupField:
+      type: object
+      description: The Unit Group Data Field
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the field
+          readOnly: true
+          maxLength: 10240
+        uuid:
+          type: string
+          description: UUID of the field
+          maxLength: 10240
+        key:
+          type: string
+          description: Unique identifier that is user facing
+          maxLength: 10240
+        name:
+          type: string
+          description: The name of the field
+          maxLength: 10240
+        field_type:
+          type: string
+          description: The type of field
+          readOnly: true
+          enum:
+            - unit-group-field
+        priority:
+          type: integer
+          description: The priority of the field, used for sorting
+        description:
+          type: string
+          description: Description for the administrative user
+          maxLength: 10240
+        translation_explanation:
+          type: string
+          description: Text used to give instructions to the translator
+          maxLength: 10240
+        personally_identifying_data:
+          type: boolean
+          description: Indicates that this field contains personally identifying data on customers
+        translation_key:
+          type: string
+          description: Key used for looking up translations for this field
+          readOnly: true
+          maxLength: 10240
+    AlternativeSet:
+      type: object
+      description: The Alternative Set object that has alternatives. It can be referenced by Fields of data type alternative set and dynamic alternative set
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the Alternative Set
+          maxLength: 10240
+        name:
+          type: string
+          description: The name of the Alternative Set
+          maxLength: 10240
+        form_kind:
+          type: string
+          description: Can be used to determine the layout on the survey
+          enum:
+            - short_text
+            - med_text
+            - long_text
+            - four_lines
+            - ten_lines
+            - drop_down
+            - radio_button
+            - check_box
+        content_kind:
+          type: string
+          description: Specifies what the content should be interpreted as, as well as the encoding (datatype) used
+          enum:
+            - email
+            - date
+            - time
+            - datetime
+            - country
+            - phone
+            - unit
+            - address1
+            - address2
+            - city
+            - state
+            - postalcode
+            - firstname
+            - lastname
+            - room_number
+            - comment
+            - monetary_cent
+            - checkin_date
+            - checkout_date
+            - enumeration
+            - long
+            - integer
+            - short_int
+            - text
+            - ip_address
+            - survey_spec
+            - real_number
+            - encrypted
+            - fractional
+            - translatable
+            - javaenum
+            - unit_group
+            - dynamic_alt_set
+            - autoindex_text
+            - hyperlink
+            - translatable_comment
+            - static_report_type
+        alternatives:
+          type: array
+          description: The alternatives in this set
+          items:
+            $ref: '#/components/schemas/Alternative'
+    Alternative:
+      type: object
+      description: An Alternative defines the enumeration for the Alternative Set
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the Alternative
+          maxLength: 10240
+        in_survey:
+          type: string
+          description: The text value that appears on the survey
+          maxLength: 10240
+        in_mobile_survey:
+          type: string
+          description: The text value that appears on the mobile version of the survey
+          maxLength: 10240
+        short_form:
+          type: string
+          description: The text value that appears in column headers
+          maxLength: 10240
+        description:
+          type: string
+          description: Appears in grid description areas of the survey for clarification
+          maxLength: 10240
+        sequence_number:
+          type: integer
+          format: int32
+          description: The key mapping value, unique, immutable identifier for the alternative
+        numeric_value:
+          type: integer
+          format: int32
+          description: Used in calculations. Typically set to the same value as the sequence number
+        export_value:
+          type: string
+          description: The value that can be used for Survey Export
+          maxLength: 10240
+        priority_raw:
+          type: integer
+          format: int32
+          description: The sort order for display
+        translation_key:
+          type: string
+          description: Key used for looking up translations for this alternative
+          maxLength: 10240
+  securitySchemes:
+    mecOauth:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://{reporting-hostname}/oauth/{company}/token
+          scopes: {}
+security:
+  - mecOauth: []
