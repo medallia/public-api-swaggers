@@ -1385,17 +1385,17 @@ components:
           default: excel
         translation_tag_ids:
           type: array
-          description: Translation tags for which this translation export is restricted to
+          description: Translation tags to contain in the export
           items:
             type: string
         translation_locale_ids:
           type: array
-          description: Translation locales for which this translation export is restricted to
+          description: Translation locales to contain in the export
           items:
             type: string
         translation_statuses:
           type: array
-          description: Translation statuses for which this translation export is restricted to
+          description: Translation statuses to contain in the export
           items:
             type: string
             enum:
