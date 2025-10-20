@@ -21,7 +21,6 @@ paths:
       summary: List translation exports
       tags:
         - Translations
-        - Translation Exports
       description: Retrieves all translation export objects
       operationId: adminV0TranslationExportsGet
       parameters:
@@ -98,7 +97,6 @@ paths:
       summary: Create translation export
       tags:
         - Translations
-        - Translation Exports
       description: Export an Excel file with the translations using the given parameters
       operationId: adminV0TranslationExportsPost
       requestBody:
@@ -166,7 +164,6 @@ paths:
       summary: Retrieve translation export by ID
       tags:
         - Translations
-        - Translation Exports
       description: Returns details of a specific translation export by its ID
       operationId: adminV0TranslationExportGet
       parameters:
@@ -236,7 +233,6 @@ paths:
       summary: Delete translation export
       tags:
         - Translations
-        - Translation Exports
       description: Deletes the translation export
       operationId: adminV0TranslationExportDelete
       parameters:
@@ -274,7 +270,6 @@ paths:
       summary: Download translation export file
       tags:
         - Translations
-        - Translation Exports
       description: Gets the exported file for the given translation export
       operationId: adminV0TranslationExportFileGet
       parameters:
@@ -348,7 +343,6 @@ paths:
       summary: List translation imports
       tags:
         - Translations
-        - Translation Imports
       description: Retrieves all translation import objects
       operationId: adminV0TranslationImportsGet
       parameters:
@@ -425,7 +419,6 @@ paths:
       summary: Create translation import
       tags:
         - Translations
-        - Translation Imports
       description: Upload translations in an Excel file
       operationId: adminV0TranslationImportsPost
       requestBody:
@@ -495,7 +488,6 @@ paths:
       summary: Retrieve translation import by ID
       tags:
         - Translations
-        - Translation Imports
       description: Returns details of a specific translation import by its ID
       operationId: adminV0TranslationImportGet
       parameters:
@@ -565,7 +557,6 @@ paths:
       summary: Delete translation import
       tags:
         - Translations
-        - Translation Imports
       description: Deletes the translation import
       operationId: adminV0TranslationImportDelete
       parameters:
@@ -603,7 +594,6 @@ paths:
       summary: List translation changes
       tags:
         - Translations
-        - Translation Imports
       description: Retrieves all translation changes for a specific translation import
       operationId: adminV0TranslationImportChangesGet
       parameters:
@@ -679,7 +669,6 @@ paths:
       summary: List translation categories from changes
       tags:
         - Translations
-        - Translation Imports
       description: Retrieves all translation categories affected by changes in a specific translation import
       operationId: adminV0TranslationImportChangesTranslationCategoriesGet
       parameters:
@@ -749,7 +738,6 @@ paths:
       summary: Retrieve translation change by ID
       tags:
         - Translations
-        - Translation Imports
       description: Returns details of a specific translation change by its ID
       operationId: adminV0TranslationImportChangeGet
       parameters:
@@ -818,7 +806,6 @@ paths:
       summary: Commit translation import
       tags:
         - Translations
-        - Translation Imports
       description: Commits all changes from a translation import to make them live
       operationId: adminV0TranslationImportCommitPost
       parameters:
@@ -871,7 +858,6 @@ paths:
       summary: List translation locales
       tags:
         - Translations
-        - Translation Imports
       description: Retrieves all translation locales for a specific translation import
       operationId: adminV0TranslationImportTranslationLocalesGet
       parameters:
@@ -947,7 +933,6 @@ paths:
       summary: Retrieve translation locale by reference ID
       tags:
         - Translations
-        - Translation Imports
       description: Returns details of a specific translation locale by its reference ID
       operationId: adminV0TranslationImportTranslationLocaleGet
       parameters:
@@ -1016,7 +1001,6 @@ paths:
       summary: List translation tags
       tags:
         - Translations
-        - Translation Imports
       description: Retrieves all translation tags for a specific translation import
       operationId: adminV0TranslationImportTranslationTagsGet
       parameters:
@@ -1092,7 +1076,6 @@ paths:
       summary: Retrieve translation tag by reference ID
       tags:
         - Translations
-        - Translation Imports
       description: Returns details of a specific translation tag by its reference ID
       operationId: adminV0TranslationImportTranslationTagGet
       parameters:
