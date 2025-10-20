@@ -3,8 +3,8 @@ info:
   title: Surveys API
   version: 1.0.0
   description:
-    The Medallia Surveys API enables retrieval of minimal survey program data within
-    Medallia Experience Cloud.
+    The Medallia Surveys API enables retrieval of survey program specification data
+    within Medallia Experience Cloud.
   termsOfService: https://medallia.com/about/legal/terms/api
 servers:
   - url: 'https://{api-gateway-hostname}'
